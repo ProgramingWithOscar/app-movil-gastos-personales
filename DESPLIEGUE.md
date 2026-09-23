@@ -39,26 +39,15 @@ dig +short kuenta.otech-labs.com
 Tiene que devolver la IP del servidor **antes** de pedir el certificado. Si no
 ha propagado, la emisión falla.
 
-## 2. Subir el código
-
-El proyecto todavía no está en ningún repositorio remoto, así que se copia
-directamente desde WSL. Esto se ejecuta **en tu máquina**, no en el servidor:
+## 2. Traer el código
 
 ```bash
-cd /var/www/gastos-personales
-
-rsync -avz --delete \
-  --exclude node_modules --exclude vendor --exclude .git \
-  --exclude 'frontend/www' --exclude 'frontend/android' \
-  --exclude '.env' --exclude 'frontend/.env' \
-  ./ root@85.31.224.173:/opt/gastos-personales/
+ssh root@85.31.224.173
+git clone https://github.com/ProgramingWithOscar/app-movil-gastos-personales.git /opt/gastos-personales
+cd /opt/gastos-personales
 ```
 
-Son unos 21 MB. Se excluyen `vendor` y `node_modules` porque el Dockerfile los
-instala dentro de la imagen, y los `.env` porque el del servidor es distinto.
-
-> Cuando pongas el proyecto en un repositorio privado, esto pasa a ser
-> `git clone` y las actualizaciones un `git pull`.
+El repositorio es público, así que clonar no pide credenciales.
 
 ## 3. Configurar
 
@@ -157,10 +146,9 @@ filtraciones conocidas.
 
 ## Actualizar
 
-Repite el `rsync` del paso 2 y luego, en el servidor:
-
 ```bash
 cd /opt/gastos-personales
+git pull
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
