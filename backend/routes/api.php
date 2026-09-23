@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\MetricsController;
 use App\Http\Controllers\Api\Admin\UserAdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\CuentaController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\MovimientoController;
@@ -35,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/sessions/{id}', [SessionController::class, 'destroy']);
         Route::delete('/sessions', [SessionController::class, 'destroyOthers']);
     });
+
+    Route::get('/categorias', CategoriaController::class);
 
     Route::get('/dashboard', DashboardController::class);
 

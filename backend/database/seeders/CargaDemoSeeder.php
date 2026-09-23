@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\CategoriaMovimiento;
+use App\Enums\TipoMovimiento;
 use App\Models\Movimiento;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -17,10 +19,17 @@ class CargaDemoSeeder extends Seeder
 {
     private const CUANTOS = 10000;
 
-    private const CATEGORIAS = [
-        'alimentacion', 'transporte', 'vivienda', 'servicios',
-        'salud', 'entretenimiento', 'compras', 'otros',
-    ];
+    /** @return array<int, string> */
+    private static function categorias(): array
+    {
+        // Del enum, no de una lista aparte: una copia escrita a mano se queda
+        // vieja en cuanto alguien toca el catálogo, y entonces los datos de
+        // carga dejan de parecerse a los de verdad.
+        return array_map(
+            fn (CategoriaMovimiento $categoria) => $categoria->value,
+            CategoriaMovimiento::de(TipoMovimiento::Gasto),
+        );
+    }
 
     public function run(): void
     {
@@ -32,6 +41,7 @@ class CargaDemoSeeder extends Seeder
         Movimiento::withoutGlobalScopes()->where('user_id', $usuario->id)->delete();
 
         $inicio = now()->subYears(2);
+        $categorias = self::categorias();
         $filas = [];
 
         for ($i = 0; $i < self::CUANTOS; $i++) {
@@ -39,7 +49,7 @@ class CargaDemoSeeder extends Seeder
                 'user_id' => $usuario->id,
                 'descripcion' => 'Movimiento de prueba '.$i,
                 'monto' => random_int(1000, 500000) / 100,
-                'categoria' => self::CATEGORIAS[array_rand(self::CATEGORIAS)],
+                'categoria' => $categorias[array_rand($categorias)],
                 'fecha' => $inicio->copy()->addDays(random_int(0, 730))->toDateString(),
                 'created_at' => now(),
                 'updated_at' => now(),

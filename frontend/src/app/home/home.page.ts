@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { AccionesService } from '../core/acciones.service';
 import { AuthService, mensajeDeError } from '../core/auth';
+import { Categoria, CategoriasService } from '../core/categorias.service';
 import { Cuenta, TipoCuenta, TipoCuentaCatalogo } from '../core/cuenta.model';
 import { CuentasService } from '../core/cuentas.service';
 import { Dashboard, PresupuestoEvaluado } from '../core/dashboard.model';
@@ -12,13 +13,6 @@ import { FUNCIONES } from '../core/funcionalidades';
 import { CategoriaResumen, Movimiento, Periodo, TipoMovimiento } from '../core/movimiento.model';
 import { MovimientosService } from '../core/movimientos.service';
 import { TonoIndicador } from './indicador/indicador.component';
-
-interface Categoria {
-  id: string;
-  nombre: string;
-  icono: string;
-  color: string;
-}
 
 interface AccionRapida {
   id: 'gasto' | 'ingreso' | 'transferencia';
@@ -54,6 +48,7 @@ export class HomePage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly accionesService = inject(AccionesService);
+  private readonly categoriasService = inject(CategoriasService);
 
   /** Radio y perímetro del círculo del SVG. */
   readonly radio = 68;
@@ -69,25 +64,8 @@ export class HomePage implements OnInit {
     { id: 'anio', nombre: 'Año' },
   ];
 
-  readonly categoriasIngreso: Categoria[] = [
-    { id: 'salario', nombre: 'Salario', icono: 'briefcase-outline', color: '#059669' },
-    { id: 'freelance', nombre: 'Freelance', icono: 'laptop-outline', color: '#0284c7' },
-    { id: 'negocio', nombre: 'Negocio', icono: 'storefront-outline', color: '#7c3aed' },
-    { id: 'inversiones', nombre: 'Inversiones', icono: 'trending-up-outline', color: '#d97706' },
-    { id: 'regalo', nombre: 'Regalo', icono: 'gift-outline', color: '#db2777' },
-    { id: 'otros', nombre: 'Otros', icono: 'ellipsis-horizontal', color: '#6b7280' },
-  ];
-
-  readonly categoriasGasto: Categoria[] = [
-    { id: 'alimentacion', nombre: 'Alimentación', icono: 'restaurant-outline', color: '#059669' },
-    { id: 'transporte', nombre: 'Transporte', icono: 'car-outline', color: '#0284c7' },
-    { id: 'vivienda', nombre: 'Vivienda', icono: 'home-outline', color: '#7c3aed' },
-    { id: 'servicios', nombre: 'Servicios', icono: 'flash-outline', color: '#d97706' },
-    { id: 'salud', nombre: 'Salud', icono: 'medkit-outline', color: '#dc2626' },
-    { id: 'entretenimiento', nombre: 'Ocio', icono: 'game-controller-outline', color: '#db2777' },
-    { id: 'compras', nombre: 'Compras', icono: 'bag-handle-outline', color: '#0891b2' },
-    { id: 'otros', nombre: 'Otros', icono: 'ellipsis-horizontal', color: '#6b7280' },
-  ];
+  /** El catálogo lo sirve el backend: es quien lo traduce y quien lo valida. */
+  readonly catalogo = this.categoriasService.catalogo;
 
   readonly accionesRapidas: AccionRapida[] = [
     { id: 'gasto', titulo: 'Gasto', descripcion: 'Dinero que sale', icono: 'arrow-down-outline', color: '#dc2626', disponible: true },
@@ -100,7 +78,7 @@ export class HomePage implements OnInit {
 
   /** Catálogo de categorías del tipo que se está viendo o creando. */
   readonly categorias = computed(() =>
-    this.vista() === 'ingreso' ? this.categoriasIngreso : this.categoriasGasto,
+    this.catalogo().filter((categoria) => categoria.tipos.includes(this.vista())),
   );
   readonly dashboard = signal<Dashboard | null>(null);
 
@@ -299,6 +277,10 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    // Antes que el resto: sin catálogo, la lista de movimientos no sabe pintar
+    // el nombre ni el color de ninguna categoría.
+    await this.categoriasService.cargar();
+
     this.periodo.set(await this.dashboardService.periodoGuardado());
     this.cargar();
     this.cargarCuentas();
@@ -392,14 +374,7 @@ export class HomePage implements OnInit {
   }
 
   buscarCategoria(id: string): Categoria {
-    return (
-      [...this.categoriasGasto, ...this.categoriasIngreso].find((c) => c.id === id) ?? {
-        id,
-        nombre: id,
-        icono: 'pricetag-outline',
-        color: '#6b7280',
-      }
-    );
+    return this.categoriasService.buscar(id);
   }
 
   iconoCategoria(id: string): string {
@@ -439,7 +414,7 @@ export class HomePage implements OnInit {
   readonly tipoNuevo = signal<TipoMovimiento>('gasto');
 
   readonly categoriasFormulario = computed(() =>
-    this.tipoNuevo() === 'ingreso' ? this.categoriasIngreso : this.categoriasGasto,
+    this.catalogo().filter((categoria) => categoria.tipos.includes(this.tipoNuevo())),
   );
 
   abrirModal(tipo: TipoMovimiento = 'gasto'): void {

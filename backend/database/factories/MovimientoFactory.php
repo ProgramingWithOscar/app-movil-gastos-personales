@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\CategoriaMovimiento;
+use App\Enums\TipoMovimiento;
 use App\Models\Cuenta;
 use App\Models\Movimiento;
 use App\Models\User;
@@ -18,8 +20,8 @@ class MovimientoFactory extends Factory
     public function ingreso(): static
     {
         return $this->state(fn () => [
-            'tipo' => 'ingreso',
-            'categoria' => fake()->randomElement(['salario', 'freelance', 'negocio', 'inversiones', 'otros']),
+            'tipo' => TipoMovimiento::Ingreso,
+            'categoria' => fake()->randomElement(self::categoriasDe(TipoMovimiento::Ingreso)),
         ]);
     }
 
@@ -33,11 +35,26 @@ class MovimientoFactory extends Factory
             'cuenta_id' => fn (array $atributos) => Cuenta::factory()->create([
                 'user_id' => $atributos['user_id'],
             ])->id,
-            'tipo' => 'gasto',
+            'tipo' => TipoMovimiento::Gasto,
             'descripcion' => fake()->words(3, true),
             'monto' => fake()->randomFloat(2, 1000, 500000),
-            'categoria' => fake()->randomElement(['alimentacion', 'transporte', 'servicios', 'salud', 'otros']),
+            'categoria' => fake()->randomElement(self::categoriasDe(TipoMovimiento::Gasto)),
             'fecha' => fake()->dateTimeBetween('-3 months')->format('Y-m-d'),
         ];
+    }
+
+    /**
+     * Sale del enum y no de una lista escrita a mano: una factoría que genera
+     * categorías que el servidor no acepta produce datos de prueba que no
+     * podrían existir en producción, y esconde justo los fallos que buscas.
+     *
+     * @return array<int, string>
+     */
+    private static function categoriasDe(TipoMovimiento $tipo): array
+    {
+        return array_map(
+            fn (CategoriaMovimiento $categoria) => $categoria->value,
+            CategoriaMovimiento::de($tipo),
+        );
     }
 }
