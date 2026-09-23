@@ -1,0 +1,70 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cuentas" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ cuenta()?.nombre ?? 'Cuenta' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (cuenta(); as datos) {
+    <div class="cabecera">
+      <p class="cabecera__etiqueta">{{ datos.tipo_nombre }}</p>
+      <p class="cabecera__monto">
+        {{ datos.saldo_actual | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+      <div class="cabecera__deuda">
+        <span>Saldo inicial {{ datos.saldo_inicial | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+        @if (datos.archivada) {
+          <span>· Archivada</span>
+        }
+      </div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="ion-padding ion-text-center">
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  <h2 class="titulo-historial">Historial</h2>
+
+  @if (cargando() && movimientos().length === 0) {
+    <div class="ion-padding">
+      @for (fila of [1, 2, 3, 4]; track fila) {
+        <div class="esqueleto">
+          <ion-skeleton-text [animated]="true" class="esqueleto__icono"></ion-skeleton-text>
+          <div class="esqueleto__datos">
+            <ion-skeleton-text [animated]="true" style="width: 55%"></ion-skeleton-text>
+            <ion-skeleton-text [animated]="true" style="width: 35%"></ion-skeleton-text>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (movimientos().length === 0) {
+    <div class="ion-padding ion-text-center">
+      <p class="sin-historial">Esta cuenta todavía no tiene movimientos.</p>
+    </div>
+  } @else {
+    <ion-list [inset]="true">
+      @for (movimiento of movimientos(); track movimiento.id) {
+        <ion-item>
+          <ion-label>
+            <h2>{{ movimiento.descripcion }}</h2>
+            <p>{{ movimiento.categoria | titlecase }} · {{ movimiento.fecha | date: 'dd MMM yyyy' }}</p>
+          </ion-label>
+          <ion-note slot="end" class="saldo" [class.saldo--ingreso]="movimiento.tipo === 'ingreso'">
+            {{ movimiento.tipo === 'ingreso' ? '+' : '-'
+            }}{{ movimiento.monto | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </ion-note>
+        </ion-item>
+      }
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="cargarMas($any($event))" [disabled]="!hayMas()">
+      <ion-infinite-scroll-content loadingText="Cargando más…"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  }
+</ion-content>

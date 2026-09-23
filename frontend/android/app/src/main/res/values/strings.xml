@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Gastos Personales</string>
+    <string name="title_activity_main">Gastos Personales</string>
+    <string name="package_name">co.gastospersonales.app</string>
+    <string name="custom_url_scheme">co.gastospersonales.app</string>
+</resources>

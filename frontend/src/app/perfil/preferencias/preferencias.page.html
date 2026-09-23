@@ -1,0 +1,92 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Preferencias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (usuario(); as persona) {
+    <ion-list [inset]="true">
+      <ion-list-header><ion-label>Región</ion-label></ion-list-header>
+
+      <ion-item>
+        <ion-select
+          label="Moneda"
+          labelPlacement="start"
+          [value]="persona.default_currency"
+          (ionChange)="cambiar('default_currency', $any($event).detail.value)"
+          interface="action-sheet"
+        >
+          @for (moneda of monedas; track moneda.codigo) {
+            <ion-select-option [value]="moneda.codigo">
+              {{ moneda.codigo }} · {{ moneda.nombre }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          label="Zona horaria"
+          labelPlacement="start"
+          [value]="persona.timezone"
+          (ionChange)="cambiar('timezone', $any($event).detail.value)"
+          interface="action-sheet"
+        >
+          @for (zona of zonas; track zona) {
+            <ion-select-option [value]="zona">{{ zona }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-select
+          label="Idioma"
+          labelPlacement="start"
+          [value]="persona.locale"
+          (ionChange)="cambiar('locale', $any($event).detail.value)"
+          interface="action-sheet"
+        >
+          <ion-select-option value="es">Español</ion-select-option>
+          <ion-select-option value="en">English</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <ion-list [inset]="true">
+      <ion-list-header><ion-label>Apariencia</ion-label></ion-list-header>
+
+      <ion-item lines="none">
+        <ion-segment
+          [value]="persona.theme"
+          (ionChange)="cambiar('theme', $any($event).detail.value)"
+        >
+          @for (tema of temas; track tema.valor) {
+            <ion-segment-button [value]="tema.valor">
+              <ion-icon [name]="tema.icono"></ion-icon>
+              <ion-label>{{ tema.nombre }}</ion-label>
+            </ion-segment-button>
+          }
+        </ion-segment>
+      </ion-item>
+    </ion-list>
+
+    <ion-list [inset]="true">
+      <ion-list-header><ion-label>Notificaciones</ion-label></ion-list-header>
+
+      @for (notificacion of notificaciones; track notificacion.clave; let ultima = $last) {
+        <ion-item [lines]="ultima ? 'none' : 'full'">
+          <ion-toggle
+            [checked]="persona.notification_preferences[notificacion.clave]"
+            (ionChange)="cambiarNotificacion(notificacion.clave, $any($event).detail.checked)"
+          >
+            {{ notificacion.nombre }}
+          </ion-toggle>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

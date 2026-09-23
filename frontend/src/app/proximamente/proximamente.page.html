@@ -1,0 +1,16 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>{{ titulo }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="vacio">
+    <div class="vacio__icono">
+      <ion-icon [name]="icono"></ion-icon>
+    </div>
+    <h2>{{ titulo }}</h2>
+    <p>{{ descripcion }}</p>
+    <ion-chip color="medium" outline>Próximamente</ion-chip>
+  </div>
+</ion-content>

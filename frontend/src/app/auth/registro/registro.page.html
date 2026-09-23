@@ -1,0 +1,119 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/bienvenida" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="auth-pantalla">
+  <div class="auth-contenido">
+    <div class="auth-marca">
+      <div class="auth-marca__icono">
+        <ion-icon name="person-add-outline"></ion-icon>
+      </div>
+      <h1 class="auth-marca__titulo">Crea tu cuenta</h1>
+      <p class="auth-marca__lema">Empieza a controlar tus gastos hoy</p>
+    </div>
+
+    <ion-card class="auth-tarjeta">
+      <ion-card-content>
+        @if (error()) {
+          <div class="auth-aviso" role="alert">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="registrar()">
+          <ion-input
+            class="auth-campo"
+            label="Nombre"
+            labelPlacement="floating"
+            fill="outline"
+            autocomplete="name"
+            autocapitalize="words"
+            formControlName="name"
+            errorText="Escribe tu nombre"
+            [class.ion-invalid]="invalido('name')"
+            [class.ion-touched]="invalido('name')"
+          >
+            <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-input
+            class="auth-campo"
+            label="Correo electrónico"
+            labelPlacement="floating"
+            fill="outline"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            formControlName="email"
+            errorText="Escribe un correo válido"
+            [class.ion-invalid]="invalido('email')"
+            [class.ion-touched]="invalido('email')"
+          >
+            <ion-icon slot="start" name="mail-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-input
+            class="auth-campo"
+            label="Contraseña"
+            labelPlacement="floating"
+            fill="outline"
+            [type]="verClave() ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="password"
+          >
+            <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <ion-button slot="end" fill="clear" (click)="alternarClave()" tabindex="-1" aria-label="Mostrar contraseña">
+              <ion-icon slot="icon-only" [name]="verClave() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-input>
+
+          @if (fuerza() > 0) {
+            <div class="fuerza">
+              <div class="fuerza__barras" [attr.data-nivel]="fuerza()">
+                @for (tramo of [1, 2, 3, 4]; track tramo) {
+                  <span class="fuerza__tramo" [class.fuerza__tramo--activo]="fuerza() >= tramo"></span>
+                }
+              </div>
+              <span class="fuerza__texto">{{ etiquetaFuerza() }}</span>
+            </div>
+
+            <p class="requisitos">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
+          }
+
+          <ion-input
+            class="auth-campo"
+            label="Repite la contraseña"
+            labelPlacement="floating"
+            fill="outline"
+            [type]="verClave() ? 'text' : 'password'"
+            autocomplete="new-password"
+            formControlName="password_confirmation"
+            errorText="Las contraseñas no coinciden"
+            [class.ion-invalid]="confirmacionNoCoincide"
+            [class.ion-touched]="confirmacionNoCoincide"
+          >
+            <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-button expand="block" type="submit" class="auth-boton" [disabled]="enviando()">
+            @if (enviando()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Crear cuenta
+            }
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="auth-pie">
+      <span>¿Ya tienes cuenta?</span>
+      <ion-button fill="clear" size="small" routerLink="/login">Inicia sesión</ion-button>
+    </div>
+  </div>
+</ion-content>

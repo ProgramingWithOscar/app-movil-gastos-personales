@@ -1,0 +1,38 @@
+.bienvenida {
+  justify-content: space-between;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.ventajas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ventaja {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--gp-borde);
+  border-radius: var(--gp-radio);
+  background: var(--gp-superficie);
+  font-size: 0.92rem;
+  line-height: 1.35;
+
+  ion-icon {
+    font-size: 22px;
+    color: var(--ion-color-primary);
+    flex-shrink: 0;
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}

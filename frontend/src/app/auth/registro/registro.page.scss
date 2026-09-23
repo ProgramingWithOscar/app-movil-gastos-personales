@@ -1,0 +1,47 @@
+.fuerza {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: -0.35rem 0 0.5rem;
+
+  &__barras {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__tramo {
+    height: 4px;
+    flex: 1;
+    border-radius: 999px;
+    background: var(--gp-borde);
+    transition: background-color 0.2s ease;
+
+    &--activo {
+      background: var(--ion-color-warning);
+    }
+  }
+
+  &__barras[data-nivel='4'] &__tramo--activo {
+    background: var(--ion-color-success);
+  }
+
+  &__barras[data-nivel='1'] &__tramo--activo {
+    background: var(--ion-color-danger);
+  }
+
+  &__texto {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gp-texto-suave);
+    min-width: 72px;
+    text-align: right;
+  }
+}
+
+.requisitos {
+  margin: 0 0 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--gp-texto-suave);
+}

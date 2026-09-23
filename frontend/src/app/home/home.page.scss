@@ -1,0 +1,898 @@
+.pantalla {
+  --background: var(--ion-background-color);
+}
+
+
+/* ── Encabezado con degradado ─────────────────────────────────────── */
+
+.cabecera {
+  // El encabezado queda fijo: sin esto, al hacer scroll se desplaza toda la
+  // pantalla y el degradado desaparece.
+  &::after {
+    display: none; // sombra por defecto de ion-header
+  }
+}
+
+.encabezado {
+  position: relative;
+  // La franja de estado (reloj, batería) se dibuja encima: sin este margen el
+  // saludo queda pegado a ella.
+  padding: calc(1.15rem + var(--ion-safe-area-top, 0px)) 1.25rem 1.5rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(160deg, #047857 0%, #059669 45%, #10b981 100%);
+  border-radius: 0 0 28px 28px;
+
+  &__recargar {
+    position: absolute;
+    top: calc(0.6rem + var(--ion-safe-area-top, 0px));
+    right: 1rem;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 18px;
+    }
+
+    &:active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &__saludo {
+    margin-bottom: 0.9rem;
+  }
+
+  &__hola {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  &__sub {
+    margin: 0.15rem 0 0;
+    font-size: 0.84rem;
+    opacity: 0.82;
+  }
+
+  &__etiqueta {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+  }
+
+  .saldo {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+
+    &__etiqueta {
+      margin: 0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.85;
+    }
+
+    &__monto {
+      margin: 0.1rem 0 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    &__deuda {
+      margin: 0.15rem 0 0;
+      font-size: 0.75rem;
+      opacity: 0.85;
+    }
+  }
+
+  &__total {
+    margin: 0.15rem 0 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  &__detalle {
+    margin: 0.1rem 0 0;
+    font-size: 0.82rem;
+    opacity: 0.8;
+  }
+}
+
+.vistas {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  margin-top: 0.9rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.vista {
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.45rem 1.35rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+
+  &--activa {
+    background: #fff;
+    color: var(--ion-color-primary-shade);
+  }
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  margin: 0.85rem 1rem 0;
+  padding: 0.85rem 0.75rem;
+  border: 1px solid var(--gp-borde);
+  border-radius: var(--gp-radio);
+  background: var(--gp-superficie);
+  box-shadow: var(--gp-sombra-suave);
+
+  &__lado {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    &--derecha {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  &__centro {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 0 0.4rem;
+    border-inline: 1px solid var(--gp-borde);
+  }
+
+  &__etiqueta {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--gp-texto-suave);
+  }
+
+  &__valor {
+    font-size: 0.85rem;
+    font-weight: 650;
+
+    &--positivo {
+      color: var(--ion-color-success);
+    }
+
+    &--negativo {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  &__resultado {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+
+    &--negativo {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  &__tasa {
+    font-size: 0.66rem;
+    color: var(--gp-texto-suave);
+    text-align: center;
+  }
+}
+
+.presupuestos {
+  margin: 0.85rem 1rem 0;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--gp-borde);
+  border-radius: var(--gp-radio);
+  background: var(--gp-superficie);
+  box-shadow: var(--gp-sombra-suave);
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+
+    h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 650;
+    }
+
+    ion-button {
+      --padding-start: 4px;
+      --padding-end: 4px;
+      margin: 0;
+      font-size: 0.8rem;
+    }
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+}
+
+/* ── Tarjeta del gráfico ──────────────────────────────────────────── */
+
+.tarjeta {
+  position: relative;
+  margin: 1rem 1rem 0;
+  padding: 1rem 1rem 1.25rem;
+  border-radius: var(--gp-radio);
+  background: var(--gp-superficie);
+  border: 1px solid var(--gp-borde);
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+}
+
+.periodos {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.periodo {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  border-radius: var(--gp-radio-sm);
+  padding: 0.45rem 0;
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--gp-texto-suave);
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+
+  &--activo {
+    background: var(--gp-verde-suave);
+    color: var(--ion-color-primary);
+  }
+}
+
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  color: var(--gp-texto-suave);
+
+  &__icono {
+    font-size: 2.4rem;
+    color: var(--ion-color-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  &__titulo {
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    max-width: 280px;
+  }
+
+  ion-button {
+    margin-top: 0.6rem;
+  }
+}
+
+/* Esqueleto con la forma del contenido real: evita el salto de layout que
+   produce un spinner centrado cuando llegan los datos. */
+.esqueleto {
+  padding: 0.5rem 0 0.25rem;
+
+  &__dona {
+    width: 190px;
+    height: 190px;
+    margin: 0.25rem auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+
+    ion-skeleton-text {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+  }
+
+  &__fila {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+  }
+
+  &__icono {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__datos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
+
+.aviso-error {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.85rem 1rem 0;
+  padding: 0.7rem 0.5rem 0.7rem 0.85rem;
+  border: 1px solid rgba(var(--ion-color-danger-rgb), 0.28);
+  border-radius: var(--gp-radio-sm);
+  background: rgba(var(--ion-color-danger-rgb), 0.06);
+
+  > ion-icon {
+    font-size: 20px;
+    color: var(--ion-color-danger);
+    flex-shrink: 0;
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    font-size: 0.8rem;
+    line-height: 1.3;
+
+    strong {
+      font-weight: 650;
+    }
+
+    span {
+      color: var(--gp-texto-suave);
+    }
+  }
+
+  ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Dona ─────────────────────────────────────────────────────────── */
+
+.dona {
+  position: relative;
+  width: 190px;
+  margin: 0.25rem auto 1.25rem;
+
+  svg {
+    width: 100%;
+    height: auto;
+    transform: rotate(-90deg);
+  }
+
+  &__pista {
+    fill: none;
+    stroke: var(--gp-borde);
+    stroke-width: 20;
+  }
+
+  &__arco {
+    fill: none;
+    stroke-width: 20;
+    stroke-linecap: butt;
+    transition: stroke-dasharray 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &__centro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+  }
+
+  &__monto {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__leyenda {
+    font-size: 0.72rem;
+    color: var(--gp-texto-suave);
+  }
+}
+
+.indicadores {
+  display: grid;
+  // Tres columnas iguales: con flex, el contenido más largo se llevaba más
+  // ancho y las tarjetas quedaban descuadradas entre sí.
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0.75rem 1rem 0;
+
+  app-indicador {
+    min-width: 0;
+  }
+}
+
+/* ── Lista de categorías ──────────────────────────────────────────── */
+
+.categorias {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.categoria {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+
+  &__icono {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--tono) 13%, transparent);
+
+    ion-icon {
+      font-size: 18px;
+      color: var(--tono);
+    }
+  }
+
+  &__datos {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__fila {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+
+  &__total {
+    font-weight: 650;
+  }
+
+  &__barra {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--gp-borde);
+    overflow: hidden;
+  }
+
+  &__relleno {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &__porcentaje {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gp-texto-suave);
+    min-width: 42px;
+    text-align: right;
+  }
+}
+
+/* ── Últimos movimientos ──────────────────────────────────────────── */
+
+.recientes {
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+
+  &__titulo {
+    margin: 0 0 0.25rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+}
+
+.icono-categoria {
+  width: 40px;
+  height: 40px;
+  margin-inline-end: 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tono) 12%, transparent);
+
+  ion-icon {
+    font-size: 20px;
+    color: var(--tono);
+  }
+}
+
+.monto {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--ion-text-color);
+
+  &--ingreso {
+    color: var(--ion-color-success);
+  }
+}
+
+.verificacion {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 1rem 1rem 0;
+  padding: 0.7rem 0.5rem 0.7rem 0.85rem;
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.3);
+  border-radius: var(--gp-radio-sm);
+  background: rgba(var(--ion-color-warning-rgb), 0.07);
+
+  > ion-icon {
+    font-size: 20px;
+    color: var(--ion-color-warning);
+    flex-shrink: 0;
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
+
+  ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    margin: 0;
+    font-size: 0.82rem;
+  }
+}
+
+/* ── Hojas inferiores ─────────────────────────────────────────────── */
+
+.hoja {
+  --border-radius: 24px 24px 0 0;
+  --backdrop-opacity: 0.35;
+  --box-shadow: 0 -8px 32px rgba(17, 24, 39, 0.14);
+
+  &__cuerpo {
+    padding: 0.5rem 1.15rem 1.25rem;
+    height: 100%;
+    overflow-y: auto;
+
+    // Mientras la hoja sube, ignora los toques: evita que el mismo click que
+    // la abrió active un botón que pasa por debajo del dedo.
+    pointer-events: none;
+
+    &.interactivo {
+      pointer-events: auto;
+    }
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    ion-button {
+      --padding-start: 6px;
+      --padding-end: 6px;
+      margin: 0;
+    }
+  }
+
+  &__titulo {
+    margin: 0.5rem 0 1rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  &__cabecera &__titulo {
+    margin: 0;
+  }
+}
+
+/* Entrada escalonada del contenido: la hoja sube y lo de dentro la sigue. */
+.hoja__cuerpo > *,
+.hoja__cuerpo form > * {
+  animation: subir 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@for $i from 1 through 8 {
+  .hoja__cuerpo form > *:nth-child(#{$i}) {
+    animation-delay: #{0.03 * $i}s;
+  }
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoja__cuerpo > *,
+  .hoja__cuerpo form > * {
+    animation: none;
+  }
+}
+
+/* ── Acciones rápidas ─────────────────────────────────────────────── */
+
+.acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.accion {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--gp-borde);
+  border-radius: var(--gp-radio);
+  background: var(--gp-superficie);
+  font: inherit;
+  text-align: left;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+
+  &:active {
+    transform: scale(0.985);
+    border-color: var(--ion-color-primary);
+  }
+
+  &--pronto {
+    opacity: 0.55;
+  }
+
+  &__icono {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: color-mix(in srgb, var(--tono) 12%, transparent);
+
+    ion-icon {
+      font-size: 21px;
+      color: var(--tono);
+    }
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    strong {
+      font-size: 0.98rem;
+      font-weight: 650;
+    }
+
+    small {
+      font-size: 0.8rem;
+      color: var(--gp-texto-suave);
+    }
+  }
+
+  &__flecha {
+    font-size: 17px;
+    color: var(--gp-texto-suave);
+  }
+}
+
+/* ── Formulario ───────────────────────────────────────────────────── */
+
+.monto-campo {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0.5rem 0 1rem;
+
+  &__moneda {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gp-texto-suave);
+  }
+
+  &__input {
+    width: 190px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ion-text-color);
+    text-align: left;
+
+    &::placeholder {
+      color: var(--gp-borde-fuerte);
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.sin-cuentas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.35);
+  border-radius: var(--gp-radio-sm);
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  font-size: 0.84rem;
+  line-height: 1.35;
+
+  ion-icon {
+    font-size: 19px;
+    color: var(--ion-color-warning);
+    flex-shrink: 0;
+  }
+
+  ion-button {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    margin: 0;
+    font-size: 0.82rem;
+  }
+}
+
+.etiqueta-seccion {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gp-texto-suave);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--gp-borde-fuerte);
+  border-radius: 999px;
+  background: var(--gp-superficie);
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+
+  ion-icon {
+    font-size: 16px;
+    color: var(--tono);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &--activa {
+    border-color: var(--tono);
+    background: color-mix(in srgb, var(--tono) 12%, transparent);
+    font-weight: 600;
+  }
+}
+
+.campo {
+  margin-bottom: 0.85rem;
+
+  &--fecha {
+    --background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    border: 1px solid var(--gp-borde-fuerte);
+    border-radius: var(--gp-radio-sm);
+    --inner-padding-start: 12px;
+    padding-inline: 12px;
+  }
+}
+
+.boton-guardar {
+  --border-radius: var(--gp-radio-sm);
+  height: 50px;
+  margin-top: 1.25rem;
+
+  ion-spinner {
+    width: 21px;
+    height: 21px;
+  }
+}

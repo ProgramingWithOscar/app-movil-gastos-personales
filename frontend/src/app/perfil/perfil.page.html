@@ -1,0 +1,99 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Mi perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (usuario(); as persona) {
+    <div class="cabecera">
+      <div class="avatar">
+        @if (persona.avatar_url) {
+          <img [src]="persona.avatar_url" alt="" />
+        } @else {
+          <span>{{ iniciales }}</span>
+        }
+      </div>
+
+      @if (editando()) {
+        <form [formGroup]="form" (ngSubmit)="guardar()" class="edicion">
+          <ion-input
+            label="Nombre"
+            labelPlacement="floating"
+            fill="outline"
+            formControlName="name"
+            autocapitalize="words"
+          ></ion-input>
+
+          <div class="edicion__acciones">
+            <ion-button fill="clear" size="small" (click)="cancelar()">Cancelar</ion-button>
+            <ion-button size="small" type="submit" [disabled]="guardando()">Guardar</ion-button>
+          </div>
+        </form>
+      } @else {
+        <h2 class="cabecera__nombre">{{ persona.name }}</h2>
+        <p class="cabecera__correo">{{ persona.email }}</p>
+
+        @if (persona.role === 'admin') {
+          <ion-badge color="secondary">Administrador</ion-badge>
+        }
+
+        <ion-button fill="clear" size="small" (click)="editar()">Editar nombre</ion-button>
+      }
+    </div>
+
+    <ion-list [inset]="true">
+      <ion-item button detail routerLink="/cuentas">
+        <ion-icon slot="start" name="wallet-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Mis cuentas</h3>
+          <p>Dónde tienes el dinero y cuánto hay en cada sitio</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button detail routerLink="/perfil/preferencias">
+        <ion-icon slot="start" name="options-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Preferencias</h3>
+          <p>Moneda, zona horaria, idioma y tema</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item button detail routerLink="/perfil/seguridad">
+        <ion-icon slot="start" name="shield-checkmark-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Seguridad</h3>
+          <p>Contraseña, sesiones y eliminar cuenta</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-label>
+          <h3>Moneda</h3>
+          <p>{{ persona.default_currency }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <h3>Zona horaria</h3>
+          <p>{{ persona.timezone }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <h3>Miembro desde</h3>
+          <p>{{ persona.created_at | date: 'dd MMM yyyy' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button expand="block" fill="outline" color="danger" (click)="cerrarSesion()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Cerrar sesión
+      </ion-button>
+    </div>
+  }
+</ion-content>

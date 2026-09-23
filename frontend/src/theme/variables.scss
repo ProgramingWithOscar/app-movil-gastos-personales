@@ -1,0 +1,80 @@
+// Paleta de la app.
+// Verde esmeralda como color de marca, neutros fríos para texto y superficies.
+// Sin degradados: color plano, bordes de un píxel y sombras muy contenidas.
+
+:root {
+  --ion-color-primary: #059669;
+  --ion-color-primary-rgb: 5, 150, 105;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #047857;
+  --ion-color-primary-tint: #10b981;
+
+  --ion-color-secondary: #0f766e;
+  --ion-color-secondary-rgb: 15, 118, 110;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #0d6862;
+  --ion-color-secondary-tint: #26847d;
+
+  --ion-color-success: #059669;
+  --ion-color-success-rgb: 5, 150, 105;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-shade: #047857;
+  --ion-color-success-tint: #10b981;
+
+  --ion-color-warning: #b45309;
+  --ion-color-warning-rgb: 180, 83, 9;
+  --ion-color-warning-contrast: #ffffff;
+
+  --ion-color-danger: #b91c1c;
+  --ion-color-danger-rgb: 185, 28, 28;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #a31919;
+  --ion-color-danger-tint: #c33333;
+
+  --ion-color-medium: #6b7280;
+  --ion-color-medium-rgb: 107, 114, 128;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-shade: #5e646f;
+  --ion-color-medium-tint: #7a808b;
+
+  --ion-background-color: #f4f6f5;
+  --ion-background-color-rgb: 244, 246, 245;
+  --ion-text-color: #111827;
+  --ion-text-color-rgb: 17, 24, 39;
+
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: #111827;
+
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+  // Tokens propios
+  --gp-superficie: #ffffff;
+  --gp-borde: #e3e7e5;
+  --gp-borde-fuerte: #cfd6d2;
+  --gp-texto-suave: #6b7280;
+  --gp-verde-suave: #ecf7f2;
+  --gp-radio: 14px;
+  --gp-radio-sm: 10px;
+  --gp-sombra: 0 1px 2px rgba(17, 24, 39, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #0f1512;
+    --ion-background-color-rgb: 15, 21, 18;
+    --ion-text-color: #e5e7eb;
+    --ion-text-color-rgb: 229, 231, 235;
+
+    --ion-toolbar-background: #161d1a;
+    --ion-toolbar-color: #e5e7eb;
+
+    --gp-superficie: #161d1a;
+    --gp-borde: #263029;
+    --gp-borde-fuerte: #33413a;
+    --gp-texto-suave: #9ca3af;
+    --gp-verde-suave: #12251d;
+    --gp-sombra: none;
+  }
+}

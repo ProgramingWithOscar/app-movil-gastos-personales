@@ -1,0 +1,134 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Presupuestos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="abrir()" aria-label="Nuevo presupuesto">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (cargando() && presupuestos().length === 0) {
+    <div class="ion-padding">
+      @for (fila of [1, 2, 3]; track fila) {
+        <div class="esqueleto">
+          <ion-skeleton-text [animated]="true" style="width: 45%"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" style="width: 100%; height: 8px"></ion-skeleton-text>
+        </div>
+      }
+    </div>
+  } @else if (presupuestos().length === 0) {
+    <div class="vacio">
+      <div class="vacio__icono"><ion-icon name="pie-chart-outline"></ion-icon></div>
+      <h2>Pon un límite a tus gastos</h2>
+      <p>
+        Un presupuesto te avisa antes de pasarte, no después. Puedes poner uno general y otros por
+        categoría.
+      </p>
+      <ion-button (click)="abrir()">Crear el primero</ion-button>
+    </div>
+  } @else {
+    @if (enProblemas() > 0) {
+      <div class="alerta">
+        <ion-icon name="warning-outline"></ion-icon>
+        <span>
+          {{ enProblemas() }} presupuesto(s) necesitan tu atención este período.
+        </span>
+      </div>
+    }
+
+    <div class="lista">
+      @for (presupuesto of presupuestos(); track presupuesto.id) {
+        <div class="tarjeta">
+          <app-presupuesto-barra [presupuesto]="presupuesto"></app-presupuesto-barra>
+
+          <div class="tarjeta__acciones">
+            <ion-button fill="clear" size="small" (click)="abrir(presupuesto)">Editar</ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="confirmarEliminar(presupuesto)">
+              Eliminar
+            </ion-button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <ion-modal
+    class="hoja"
+    [isOpen]="modalAbierto()"
+    [breakpoints]="[0, 0.75]"
+    [initialBreakpoint]="0.75"
+    [handle]="true"
+    (didDismiss)="cerrar()"
+  >
+    <ng-template>
+      <div class="hoja__cuerpo">
+        <header class="hoja__cabecera">
+          <h2>{{ editando() ? 'Editar presupuesto' : 'Nuevo presupuesto' }}</h2>
+          <ion-button fill="clear" size="small" (click)="cerrar()">Cancelar</ion-button>
+        </header>
+
+        <form [formGroup]="form" (ngSubmit)="guardar()">
+          <div class="monto">
+            <span class="monto__moneda">$</span>
+            <input
+              class="monto__input"
+              type="text"
+              inputmode="numeric"
+              placeholder="0"
+              [value]="montoTexto()"
+              (input)="alEscribirMonto($event)"
+              aria-label="Monto del presupuesto"
+            />
+          </div>
+
+          <ion-list>
+            <ion-item>
+              <ion-select label="Categoría" labelPlacement="stacked" formControlName="categoria">
+                @for (categoria of categorias; track categoria.id) {
+                  <ion-select-option [value]="categoria.id">{{ categoria.nombre }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-select label="Período" labelPlacement="stacked" formControlName="periodo">
+                <ion-select-option value="mes">Mensual</ion-select-option>
+                <ion-select-option value="semana">Semanal</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-input
+                label="Avisarme al llegar al (%)"
+                labelPlacement="stacked"
+                type="number"
+                inputmode="numeric"
+                formControlName="umbral_alerta"
+              ></ion-input>
+            </ion-item>
+          </ion-list>
+
+          <p class="nota">
+            Además del aviso por porcentaje, te advertimos si al ritmo actual vas a superarlo antes
+            de que termine el período.
+          </p>
+
+          <ion-button expand="block" type="submit" [disabled]="form.invalid || guardando()">
+            @if (guardando()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Guardar
+            }
+          </ion-button>
+        </form>
+      </div>
+    </ng-template>
+  </ion-modal>
+</ion-content>

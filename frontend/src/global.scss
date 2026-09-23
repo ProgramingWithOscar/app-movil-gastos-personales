@@ -1,0 +1,186 @@
+/* Ionic core */
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/float-elements.css';
+@import '@ionic/angular/css/text-alignment.css';
+@import '@ionic/angular/css/text-transformation.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+@import './theme/variables.scss';
+
+body {
+  font-family: var(--ion-font-family);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Botones planos, sin sombra ni mayúsculas forzadas. */
+ion-button {
+  --border-radius: var(--gp-radio-sm);
+  --box-shadow: none;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+ion-toolbar {
+  --border-width: 0 0 1px;
+  --border-color: var(--gp-borde);
+}
+
+/* ── Pantallas de autenticación ───────────────────────────────────── */
+/* Compartidas por bienvenida, login y registro para no repetir estilos. */
+
+.auth-pantalla {
+  --background: var(--ion-background-color);
+}
+
+.auth-contenido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  padding: 2rem 1rem;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-marca {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-marca__icono {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--gp-radio);
+  background: var(--ion-color-primary);
+}
+
+.auth-marca__icono ion-icon {
+  font-size: 28px;
+  color: #fff;
+}
+
+.auth-marca__titulo {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.auth-marca__lema {
+  margin: 0.3rem 0 0;
+  font-size: 0.92rem;
+  color: var(--gp-texto-suave);
+}
+
+.auth-tarjeta {
+  margin: 0;
+  border-radius: var(--gp-radio);
+  box-shadow: var(--gp-sombra);
+  border: 1px solid var(--gp-borde);
+  background: var(--gp-superficie);
+}
+
+.auth-tarjeta ion-card-content {
+  padding: 1.4rem 1.15rem 1.25rem;
+}
+
+.auth-tarjeta__titulo {
+  margin: 0 0 1.15rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--ion-text-color);
+}
+
+.auth-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(var(--ion-color-danger-rgb), 0.25);
+  border-radius: var(--gp-radio-sm);
+  background: rgba(var(--ion-color-danger-rgb), 0.06);
+  color: var(--ion-color-danger);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.auth-aviso ion-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.auth-campo {
+  margin-bottom: 0.9rem;
+  --highlight-color-focused: var(--ion-color-primary);
+  --border-radius: var(--gp-radio-sm);
+  --padding-start: 12px;
+}
+
+.auth-campo ion-icon[slot='start'] {
+  margin-inline-end: 10px;
+  color: var(--gp-texto-suave);
+  font-size: 20px;
+}
+
+.auth-boton {
+  --border-radius: var(--gp-radio-sm);
+  height: 48px;
+  margin: 1rem 0 0;
+  font-size: 0.98rem;
+}
+
+.auth-boton ion-spinner {
+  width: 21px;
+  height: 21px;
+}
+
+.auth-pie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  margin-top: 1.25rem;
+  font-size: 0.88rem;
+  color: var(--gp-texto-suave);
+}
+
+.auth-pie ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.nota {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--gp-texto-suave);
+}
+
+ion-list {
+  background: transparent;
+}
+
+/* Tema forzado desde preferencias, por encima del ajuste del sistema. */
+:root[data-tema='dark'] {
+  --ion-background-color: #0f1512;
+  --ion-text-color: #e5e7eb;
+  --gp-superficie: #161d1a;
+  --gp-borde: #263029;
+  --gp-borde-fuerte: #33413a;
+  --gp-texto-suave: #9ca3af;
+  --gp-verde-suave: #12251d;
+}

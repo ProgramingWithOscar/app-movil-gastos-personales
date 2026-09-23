@@ -1,0 +1,112 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Seguridad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label>Cambiar contraseña</ion-label></ion-list-header>
+
+    <form [formGroup]="form" (ngSubmit)="cambiarContrasena()" class="ion-padding">
+      <ion-input
+        class="auth-campo"
+        label="Contraseña actual"
+        labelPlacement="floating"
+        fill="outline"
+        [type]="verClave() ? 'text' : 'password'"
+        formControlName="current_password"
+      >
+        <ion-button slot="end" fill="clear" (click)="alternarClave()" tabindex="-1">
+          <ion-icon slot="icon-only" [name]="verClave() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-input>
+
+      <ion-input
+        class="auth-campo"
+        label="Contraseña nueva"
+        labelPlacement="floating"
+        fill="outline"
+        [type]="verClave() ? 'text' : 'password'"
+        formControlName="password"
+      ></ion-input>
+
+      <ion-input
+        class="auth-campo"
+        label="Repite la nueva"
+        labelPlacement="floating"
+        fill="outline"
+        [type]="verClave() ? 'text' : 'password'"
+        formControlName="password_confirmation"
+      ></ion-input>
+
+      <p class="nota">
+        Mínimo 8 caracteres, con mayúscula, minúscula y número. Al cambiarla se cerrarán tus
+        sesiones en los demás dispositivos.
+      </p>
+
+      <ion-button expand="block" type="submit" [disabled]="cambiando()">
+        @if (cambiando()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          Cambiar contraseña
+        }
+      </ion-button>
+    </form>
+  </ion-list>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>Sesiones activas</ion-label>
+      <ion-button fill="clear" size="small" (click)="cerrarOtras()">Cerrar las demás</ion-button>
+    </ion-list-header>
+
+    @if (cargando()) {
+      <ion-item lines="none">
+        <ion-spinner name="crescent" slot="start"></ion-spinner>
+        <ion-label>Cargando…</ion-label>
+      </ion-item>
+    } @else {
+      @for (sesion of sesiones(); track sesion.id; let ultima = $last) {
+        <ion-item [lines]="ultima ? 'none' : 'full'">
+          <ion-icon slot="start" name="phone-portrait-outline" color="medium"></ion-icon>
+          <ion-label>
+            <h3>{{ sesion.dispositivo }}</h3>
+            <p>
+              @if (sesion.actual) {
+                Este dispositivo
+              } @else {
+                Último uso: {{ sesion.ultimo_uso ? (sesion.ultimo_uso | date: 'dd MMM, HH:mm') : 'sin registrar' }}
+              }
+            </p>
+          </ion-label>
+
+          @if (!sesion.actual) {
+            <ion-button slot="end" fill="clear" color="danger" size="small" (click)="revocar(sesion)">
+              Cerrar
+            </ion-button>
+          } @else {
+            <ion-badge slot="end" color="success">Actual</ion-badge>
+          }
+        </ion-item>
+      }
+    }
+  </ion-list>
+
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label color="danger">Zona peligrosa</ion-label></ion-list-header>
+
+    <div class="ion-padding">
+      <p class="nota">
+        Al eliminar tu cuenta se borran tus movimientos y no podrás volver a entrar.
+      </p>
+
+      <ion-button expand="block" color="danger" fill="outline" (click)="confirmarEliminarCuenta()">
+        Eliminar mi cuenta
+      </ion-button>
+    </div>
+  </ion-list>
+</ion-content>

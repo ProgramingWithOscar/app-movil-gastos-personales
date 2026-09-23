@@ -1,0 +1,275 @@
+.cabecera {
+  padding: 1.5rem 1.25rem 1.25rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(160deg, #047857 0%, #059669 45%, #10b981 100%);
+  border-radius: 0 0 24px 24px;
+
+  &__etiqueta {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+  }
+
+  &__monto {
+    margin: 0.15rem 0 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  &__deuda {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 0.3rem;
+    font-size: 0.78rem;
+    opacity: 0.88;
+  }
+}
+
+.icono {
+  width: 42px;
+  height: 42px;
+  margin-inline-end: 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--tono) 13%, transparent);
+
+  ion-icon {
+    font-size: 21px;
+    color: var(--tono);
+  }
+}
+
+.favorita {
+  font-size: 13px;
+  color: var(--ion-color-warning);
+  vertical-align: middle;
+  margin-inline-start: 4px;
+}
+
+.saldo {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+
+  &--deuda {
+    color: var(--ion-color-danger);
+  }
+}
+
+.archivada {
+  opacity: 0.6;
+}
+
+.archivadas {
+  padding-bottom: 2rem;
+
+  &__boton {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0.4rem 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gp-texto-suave);
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 15px;
+    }
+  }
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3rem 2rem;
+  text-align: center;
+
+  &__icono {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 22px;
+    background: var(--gp-verde-suave);
+    margin-bottom: 0.5rem;
+
+    ion-icon {
+      font-size: 34px;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--gp-texto-suave);
+    max-width: 320px;
+  }
+}
+
+.esqueleto {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.3rem;
+
+  &__icono {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__datos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}
+
+/* ── Hoja del formulario ──────────────────────────────────────────── */
+
+.hoja {
+  --border-radius: 24px 24px 0 0;
+  --backdrop-opacity: 0.35;
+
+  &__cuerpo {
+    padding: 0.5rem 1.15rem 1.5rem;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    ion-button {
+      --padding-start: 6px;
+      --padding-end: 6px;
+      margin: 0;
+    }
+  }
+}
+
+.campo {
+  margin-bottom: 0.9rem;
+}
+
+.etiqueta {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gp-texto-suave);
+}
+
+.tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--gp-borde-fuerte);
+  border-radius: 999px;
+  background: var(--gp-superficie);
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--ion-text-color);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  ion-icon {
+    font-size: 16px;
+    color: var(--tono);
+  }
+
+  &--activo {
+    border-color: var(--tono);
+    background: color-mix(in srgb, var(--tono) 12%, transparent);
+    font-weight: 600;
+  }
+}
+
+.monto {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.25rem 0 0.5rem;
+
+  &__moneda {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--gp-texto-suave);
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ion-text-color);
+  }
+}
+
+.nota {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--gp-texto-suave);
+}
+
+.titulo-historial {
+  margin: 1.1rem 0 0 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.sin-historial {
+  font-size: 0.9rem;
+  color: var(--gp-texto-suave);
+}
+
+.saldo--ingreso {
+  color: var(--ion-color-success);
+}

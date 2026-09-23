@@ -1,0 +1,89 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/bienvenida" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="auth-pantalla">
+  <div class="auth-contenido">
+    <div class="auth-marca">
+      <div class="auth-marca__icono">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+      <h1 class="auth-marca__titulo">Hola de nuevo</h1>
+      <p class="auth-marca__lema">Entra para seguir con tus cuentas</p>
+    </div>
+
+    <ion-card class="auth-tarjeta">
+      <ion-card-content>
+        <h2 class="auth-tarjeta__titulo">Inicia sesión</h2>
+
+        @if (error()) {
+          <div class="auth-aviso" role="alert">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="entrar()">
+          <ion-input
+            class="auth-campo"
+            label="Correo electrónico"
+            labelPlacement="floating"
+            fill="outline"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            formControlName="email"
+            errorText="Escribe un correo válido"
+            [class.ion-invalid]="invalido('email')"
+            [class.ion-touched]="invalido('email')"
+          >
+            <ion-icon slot="start" name="mail-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-input
+            class="auth-campo"
+            label="Contraseña"
+            labelPlacement="floating"
+            fill="outline"
+            [type]="verClave() ? 'text' : 'password'"
+            autocomplete="current-password"
+            formControlName="password"
+            errorText="La contraseña es obligatoria"
+            [class.ion-invalid]="invalido('password')"
+            [class.ion-touched]="invalido('password')"
+          >
+            <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <ion-button slot="end" fill="clear" (click)="alternarClave()" tabindex="-1" aria-label="Mostrar contraseña">
+              <ion-icon slot="icon-only" [name]="verClave() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-input>
+
+          @if (correoHabilitado) {
+            <div class="ion-text-end">
+              <ion-button fill="clear" size="small" routerLink="/recuperar">
+                ¿Olvidaste tu contraseña?
+              </ion-button>
+            </div>
+          }
+
+          <ion-button expand="block" type="submit" class="auth-boton" [disabled]="enviando()">
+            @if (enviando()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Entrar
+            }
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="auth-pie">
+      <span>¿Aún no tienes cuenta?</span>
+      <ion-button fill="clear" size="small" routerLink="/registro">Créala aquí</ion-button>
+    </div>
+  </div>
+</ion-content>

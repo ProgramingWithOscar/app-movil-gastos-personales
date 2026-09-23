@@ -1,0 +1,30 @@
+<ion-content [fullscreen]="true" class="auth-pantalla">
+  <div class="auth-contenido bienvenida">
+    <div class="auth-marca">
+      <div class="auth-marca__icono">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+      <h1 class="auth-marca__titulo">Gastos personales</h1>
+      <p class="auth-marca__lema">Sabe siempre en qué se te va el dinero</p>
+    </div>
+
+    <ul class="ventajas">
+      @for (ventaja of ventajas; track ventaja.texto) {
+        <li class="ventaja">
+          <ion-icon [name]="ventaja.icono"></ion-icon>
+          <span>{{ ventaja.texto }}</span>
+        </li>
+      }
+    </ul>
+
+    <div class="acciones">
+      <ion-button expand="block" class="auth-boton" routerLink="/registro">
+        Crear cuenta
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" class="auth-boton" routerLink="/login">
+        Ya tengo cuenta
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

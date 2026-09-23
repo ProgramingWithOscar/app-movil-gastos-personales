@@ -1,0 +1,30 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="barra">
+    <ion-tab-button tab="inicio">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>Inicio</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="movimientos">
+      <ion-icon name="swap-vertical-outline"></ion-icon>
+      <ion-label>Movimientos</ion-label>
+    </ion-tab-button>
+
+    <!-- Hueco para el botón central, que va por encima de la barra -->
+    <ion-tab-button disabled class="barra__hueco"></ion-tab-button>
+
+    <ion-tab-button tab="presupuestos">
+      <ion-icon name="pie-chart-outline"></ion-icon>
+      <ion-label>Presupuestos</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="perfil">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Perfil</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+  <button type="button" class="crear" (click)="registrar()" aria-label="Registrar movimiento">
+    <ion-icon name="add"></ion-icon>
+  </button>
+</ion-tabs>

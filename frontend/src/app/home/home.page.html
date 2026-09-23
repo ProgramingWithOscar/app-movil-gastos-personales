@@ -1,0 +1,449 @@
+<ion-header class="cabecera ion-no-border">
+  <header class="encabezado">
+    <button type="button" class="encabezado__recargar" (click)="cargar()" aria-label="Actualizar">
+      <ion-icon name="refresh-outline"></ion-icon>
+    </button>
+
+    <div class="encabezado__saludo">
+      <p class="encabezado__hola">{{ saludo() }}</p>
+      <p class="encabezado__sub">Esto es lo que llevas este {{ rotulo() }}</p>
+    </div>
+
+    @if (saldo(); as dinero) {
+      @if (dinero.cuentas > 0) {
+        <button type="button" class="saldo" routerLink="/cuentas">
+          <p class="saldo__etiqueta">Dinero disponible</p>
+          <p class="saldo__monto">
+            {{ dinero.saldo_total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </p>
+
+          @if (hayDeuda()) {
+            <p class="saldo__deuda">
+              Debes {{ dinero.deuda | currency: 'COP' : 'symbol-narrow' : '1.0-0' }} ·
+              Neto {{ dinero.patrimonio_neto | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </p>
+          }
+        </button>
+      }
+    }
+
+    <p class="encabezado__etiqueta">{{ esIngreso() ? 'Total recibido' : 'Total gastado' }}</p>
+    <p class="encabezado__total">
+      {{ (resumen()?.total ?? 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+    </p>
+    <p class="encabezado__detalle">{{ resumen()?.movimientos ?? 0 }} movimiento(s)</p>
+
+    <div class="vistas">
+      <button
+        type="button"
+        class="vista"
+        [class.vista--activa]="vista() === 'gasto'"
+        (click)="cambiarVista('gasto')"
+      >
+        Gastos
+      </button>
+      <button
+        type="button"
+        class="vista"
+        [class.vista--activa]="vista() === 'ingreso'"
+        (click)="cambiarVista('ingreso')"
+      >
+        Ingresos
+      </button>
+    </div>
+  </header>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="pantalla">
+
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
+  @if (correoHabilitado && usuario() && !usuario()!.email_verified) {
+    <div class="verificacion">
+      <ion-icon name="mail-unread-outline"></ion-icon>
+      <div class="verificacion__texto">
+        <strong>Verifica tu correo</strong>
+        <span>Te enviamos un enlace a {{ usuario()!.email }}.</span>
+      </div>
+      <ion-button fill="clear" size="small" (click)="reenviarVerificacion()" [disabled]="reenviando()">
+        Reenviar
+      </ion-button>
+    </div>
+  }
+
+  @if (errorCarga()) {
+    <div class="aviso-error" role="alert">
+      <ion-icon name="cloud-offline-outline"></ion-icon>
+      <div class="aviso-error__texto">
+        <strong>{{ errorCarga() }}</strong>
+        @if (dashboard()) {
+          <span>Estás viendo los últimos datos cargados.</span>
+        }
+      </div>
+      <ion-button fill="clear" size="small" (click)="cargar()">Reintentar</ion-button>
+    </div>
+  }
+
+  @if (balance(); as datos) {
+    <div class="balance">
+      <div class="balance__lado">
+        <span class="balance__etiqueta">Ingresos</span>
+        <strong class="balance__valor balance__valor--positivo">
+          {{ datos.ingresos | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+        </strong>
+      </div>
+
+      <div class="balance__centro">
+        <span class="balance__etiqueta">Balance</span>
+        <strong class="balance__resultado" [class.balance__resultado--negativo]="datos.balance < 0">
+          {{ datos.balance | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+        </strong>
+        @if (datos.tasa_ahorro !== null) {
+          <span class="balance__tasa">Ahorras el {{ datos.tasa_ahorro }}%</span>
+        } @else {
+          <span class="balance__tasa">Sin ingresos registrados</span>
+        }
+      </div>
+
+      <div class="balance__lado balance__lado--derecha">
+        <span class="balance__etiqueta">Gastos</span>
+        <strong class="balance__valor balance__valor--negativo">
+          {{ datos.gastos | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+        </strong>
+      </div>
+    </div>
+  }
+
+  @if (presupuestosDestacados().length > 0) {
+    <section class="presupuestos">
+      <div class="presupuestos__cabecera">
+        <h2>Presupuestos</h2>
+        <ion-button fill="clear" size="small" routerLink="/tabs/presupuestos">Ver todos</ion-button>
+      </div>
+
+      <div class="presupuestos__lista">
+        @for (presupuesto of presupuestosDestacados(); track presupuesto.id) {
+          <app-presupuesto-barra [presupuesto]="presupuesto"></app-presupuesto-barra>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="tarjeta">
+    <div class="periodos">
+      @for (opcion of periodos; track opcion.id) {
+        <button
+          type="button"
+          class="periodo"
+          [class.periodo--activo]="periodo() === opcion.id"
+          (click)="cambiarPeriodo(opcion.id)"
+        >
+          {{ opcion.nombre }}
+        </button>
+      }
+    </div>
+
+    @if (cargando() && !dashboard()) {
+      <div class="esqueleto">
+        <div class="esqueleto__dona">
+          <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+        </div>
+
+        @for (fila of [1, 2, 3]; track fila) {
+          <div class="esqueleto__fila">
+            <ion-skeleton-text [animated]="true" class="esqueleto__icono"></ion-skeleton-text>
+            <div class="esqueleto__datos">
+              <ion-skeleton-text [animated]="true" style="width: 55%"></ion-skeleton-text>
+              <ion-skeleton-text [animated]="true" style="width: 100%; height: 5px"></ion-skeleton-text>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (segmentos().length === 0) {
+      <div class="estado">
+        <ion-icon
+          [name]="sinMovimientosNunca() ? 'rocket-outline' : 'calendar-clear-outline'"
+          class="estado__icono"
+        ></ion-icon>
+
+        @if (sinMovimientosNunca()) {
+          <p class="estado__titulo">Empieza por tu primer movimiento</p>
+          <p>Registra lo que gastas y en unos días verás en qué se te va el dinero.</p>
+          <ion-button size="small" (click)="abrirAcciones()">Registrar el primero</ion-button>
+        } @else {
+          <p class="estado__titulo">
+            Sin {{ esIngreso() ? 'ingresos' : 'gastos' }} este {{ rotulo() }}
+          </p>
+          <p>No registraste nada en este período. Prueba con otro rango.</p>
+        }
+      </div>
+    } @else {
+      <div class="dona">
+        <svg viewBox="0 0 180 180" role="img" aria-label="Distribución de gastos por categoría">
+          <circle class="dona__pista" cx="90" cy="90" [attr.r]="radio"></circle>
+
+          @for (segmento of segmentos(); track segmento.categoria) {
+            <circle
+              class="dona__arco"
+              cx="90"
+              cy="90"
+              [attr.r]="radio"
+              [attr.stroke]="segmento.color"
+              [attr.stroke-dasharray]="segmento.longitud + ' ' + perimetro"
+              [attr.stroke-dashoffset]="segmento.desplazamiento"
+            ></circle>
+          }
+        </svg>
+
+        <div class="dona__centro">
+          <span class="dona__monto">
+            {{ (resumen()?.total ?? 0) | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </span>
+          <span class="dona__leyenda">en {{ segmentos().length }} categoría(s)</span>
+        </div>
+      </div>
+
+      <ul class="categorias">
+        @for (segmento of segmentos(); track segmento.categoria) {
+          <li class="categoria">
+            <span class="categoria__icono" [style.--tono]="segmento.color">
+              <ion-icon [name]="segmento.icono"></ion-icon>
+            </span>
+
+            <div class="categoria__datos">
+              <div class="categoria__fila">
+                <strong>{{ segmento.nombre }}</strong>
+                <span class="categoria__total">
+                  {{ segmento.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </span>
+              </div>
+
+              <div class="categoria__barra">
+                <span
+                  class="categoria__relleno"
+                  [style.width.%]="segmento.porcentaje"
+                  [style.background]="segmento.color"
+                ></span>
+              </div>
+            </div>
+
+            <span class="categoria__porcentaje">{{ segmento.porcentaje }}%</span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  @if (!cargando() && segmentos().length > 0) {
+  <div class="indicadores">
+    <app-indicador
+      etiqueta="Vs. anterior"
+      [valor]="indicadorVariacion().valor"
+      [detalle]="indicadorVariacion().detalle"
+      [icono]="indicadorVariacion().icono"
+      [tono]="indicadorVariacion().tono"
+    ></app-indicador>
+
+    <app-indicador
+      etiqueta="Promedio/día"
+      [valor]="indicadorPromedio().valor"
+      [detalle]="indicadorPromedio().detalle"
+      [icono]="indicadorPromedio().icono"
+    ></app-indicador>
+
+    <app-indicador
+      [etiqueta]="etiquetaMayor()"
+      [valor]="indicadorCategoria().valor"
+      [detalle]="indicadorCategoria().detalle"
+      [icono]="indicadorCategoria().icono"
+    ></app-indicador>
+  </div>
+
+  }
+
+  @if (recientes().length > 0) {
+    <section class="recientes">
+      <h2 class="recientes__titulo">Últimos movimientos</h2>
+
+      <ion-list [inset]="true">
+        @for (movimiento of recientes(); track movimiento.id) {
+          <ion-item-sliding>
+            <ion-item>
+              <div class="icono-categoria" slot="start" [style.--tono]="colorCategoria(movimiento.categoria)">
+                <ion-icon [name]="iconoCategoria(movimiento.categoria)"></ion-icon>
+              </div>
+              <ion-label>
+                <h2>{{ movimiento.descripcion }}</h2>
+                <p>
+                  {{ movimiento.categoria | titlecase }} · {{ movimiento.fecha | date: 'dd MMM' }}
+                  @if (movimiento.cuenta) {
+                    · {{ movimiento.cuenta.nombre }}
+                  }
+                </p>
+              </ion-label>
+              <ion-note slot="end" class="monto" [class.monto--ingreso]="movimiento.tipo === 'ingreso'">
+                {{ movimiento.tipo === 'ingreso' ? '+' : '-'
+                }}{{ movimiento.monto | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+              </ion-note>
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-item-option color="danger" (click)="confirmarEliminar(movimiento)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+      }
+      </ion-list>
+    </section>
+  }
+
+  <ion-modal
+    class="hoja hoja--acciones"
+    [isOpen]="accionesAbiertas()"
+    [breakpoints]="[0, 0.42]"
+    [initialBreakpoint]="0.42"
+    [handle]="true"
+    (didPresent)="accionesListas.set(true)"
+    (didDismiss)="cerrarAcciones()"
+  >
+    <ng-template>
+      <div class="hoja__cuerpo" [class.interactivo]="accionesListas()">
+        <h2 class="hoja__titulo">¿Qué quieres registrar?</h2>
+
+        <div class="acciones">
+          @for (accion of accionesRapidas; track accion.id) {
+            <button
+              type="button"
+              class="accion"
+              [class.accion--pronto]="!accion.disponible"
+              (click)="elegirAccion(accion)"
+            >
+              <span class="accion__icono" [style.--tono]="accion.color">
+                <ion-icon [name]="accion.icono"></ion-icon>
+              </span>
+              <span class="accion__texto">
+                <strong>{{ accion.titulo }}</strong>
+                <small>{{ accion.disponible ? accion.descripcion : 'Próximamente' }}</small>
+              </span>
+              <ion-icon class="accion__flecha" name="chevron-forward"></ion-icon>
+            </button>
+          }
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal
+    class="hoja hoja--formulario"
+    [isOpen]="modalAbierto()"
+    [breakpoints]="[0, 0.7, 0.95]"
+    [initialBreakpoint]="0.7"
+    [handle]="true"
+    (didPresent)="formularioListo.set(true)"
+    (didDismiss)="cerrarModal()"
+  >
+    <ng-template>
+      <div class="hoja__cuerpo" [class.interactivo]="formularioListo()">
+        <header class="hoja__cabecera">
+          <h2 class="hoja__titulo">{{ tipoNuevo() === 'ingreso' ? 'Nuevo ingreso' : 'Nuevo gasto' }}</h2>
+          <ion-button fill="clear" size="small" (click)="cerrarModal()">Cancelar</ion-button>
+        </header>
+
+        <form [formGroup]="form" (ngSubmit)="guardar()">
+          <div class="monto-campo">
+            <span class="monto-campo__moneda">$</span>
+            <input
+              class="monto-campo__input"
+              type="text"
+              inputmode="numeric"
+              placeholder="0"
+              [value]="montoTexto()"
+              (input)="alEscribirMonto($event)"
+              aria-label="Monto"
+            />
+          </div>
+
+          @if (cuentas().length > 0) {
+            <p class="etiqueta-seccion">Cuenta</p>
+            <div class="chips">
+              @for (cuenta of cuentas(); track cuenta.id) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.chip--activa]="form.controls.cuenta_id.value === cuenta.id"
+                  [style.--tono]="cuenta.color"
+                  (click)="form.controls.cuenta_id.setValue(cuenta.id)"
+                >
+                  <ion-icon [name]="cuenta.icono"></ion-icon>
+                  {{ cuenta.nombre }}
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="sin-cuentas">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <span>Necesitas una cuenta para registrar movimientos.</span>
+              <ion-button size="small" fill="clear" routerLink="/cuentas" (click)="cerrarModal()">
+                Crear una
+              </ion-button>
+            </div>
+          }
+
+          <p class="etiqueta-seccion">Categoría</p>
+          <div class="chips">
+            @for (categoria of categoriasFormulario(); track categoria.id) {
+              <button
+                type="button"
+                class="chip"
+                [class.chip--activa]="form.controls.categoria.value === categoria.id"
+                [style.--tono]="categoria.color"
+                (click)="elegirCategoria(categoria.id)"
+              >
+                <ion-icon [name]="categoria.icono"></ion-icon>
+                {{ categoria.nombre }}
+              </button>
+            }
+          </div>
+
+          <ion-input
+            class="campo"
+            label="Descripción"
+            labelPlacement="floating"
+            fill="outline"
+            formControlName="descripcion"
+            placeholder="Almuerzo, mercado, taxi…"
+            autocapitalize="sentences"
+          ></ion-input>
+
+          <ion-item lines="none" class="campo campo--fecha">
+            <ion-label>Fecha</ion-label>
+            <ion-datetime-button datetime="fecha" slot="end"></ion-datetime-button>
+          </ion-item>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime id="fecha" presentation="date" formControlName="fecha"></ion-datetime>
+            </ng-template>
+          </ion-modal>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            class="boton-guardar"
+            [disabled]="form.invalid || guardando()"
+          >
+            @if (guardando()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Guardar {{ tipoNuevo() === 'ingreso' ? 'ingreso' : 'gasto' }}
+            }
+          </ion-button>
+        </form>
+      </div>
+    </ng-template>
+  </ion-modal>
+</ion-content>

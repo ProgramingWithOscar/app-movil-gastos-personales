@@ -1,0 +1,73 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="auth-pantalla">
+  <div class="auth-contenido">
+    @if (enviado()) {
+      <div class="auth-marca">
+        <div class="auth-marca__icono">
+          <ion-icon name="mail-open-outline"></ion-icon>
+        </div>
+        <h1 class="auth-marca__titulo">Revisa tu correo</h1>
+        <p class="auth-marca__lema">
+          Si <strong>{{ correo }}</strong> tiene una cuenta, le enviamos un enlace para crear una
+          contraseña nueva. El enlace caduca en una hora.
+        </p>
+      </div>
+
+      <ion-button expand="block" fill="outline" class="auth-boton" routerLink="/login">
+        Volver a iniciar sesión
+      </ion-button>
+    } @else {
+      <div class="auth-marca">
+        <div class="auth-marca__icono">
+          <ion-icon name="key-outline"></ion-icon>
+        </div>
+        <h1 class="auth-marca__titulo">¿Olvidaste tu contraseña?</h1>
+        <p class="auth-marca__lema">Te enviamos un enlace para crear una nueva</p>
+      </div>
+
+      <ion-card class="auth-tarjeta">
+        <ion-card-content>
+          @if (error()) {
+            <div class="auth-aviso" role="alert">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <span>{{ error() }}</span>
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="enviar()">
+            <ion-input
+              class="auth-campo"
+              label="Correo electrónico"
+              labelPlacement="floating"
+              fill="outline"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              formControlName="email"
+              errorText="Escribe un correo válido"
+              [class.ion-invalid]="invalido()"
+              [class.ion-touched]="invalido()"
+            >
+              <ion-icon slot="start" name="mail-outline" aria-hidden="true"></ion-icon>
+            </ion-input>
+
+            <ion-button expand="block" type="submit" class="auth-boton" [disabled]="enviando()">
+              @if (enviando()) {
+                <ion-spinner name="crescent"></ion-spinner>
+              } @else {
+                Enviar enlace
+              }
+            </ion-button>
+          </form>
+        </ion-card-content>
+      </ion-card>
+    }
+  </div>
+</ion-content>

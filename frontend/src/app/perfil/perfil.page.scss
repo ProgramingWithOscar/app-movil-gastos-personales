@@ -1,0 +1,56 @@
+.cabecera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.75rem 1.25rem 1rem;
+  text-align: center;
+
+  &__nombre {
+    margin: 0.4rem 0 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &__correo {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--gp-texto-suave);
+  }
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--gp-verde-suave);
+  color: var(--ion-color-primary);
+  font-size: 1.9rem;
+  font-weight: 700;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.edicion {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 0.75rem;
+
+  &__acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+  }
+}
+
+ion-list {
+  background: transparent;
+}
