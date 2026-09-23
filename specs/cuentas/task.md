@@ -205,13 +205,20 @@ cinco huecos siguen ocupados.
 
 ## Bloque 6 · Cierre
 
-- [ ] **6.1** Repasar los 13 criterios de la spec §9, con evidencia.
-- [ ] **6.2** Verificar el criterio 5 con un script: recalcular todos los saldos
+- [x] **6.1** Repasar los 13 criterios de la spec §9, con evidencia.
+- [x] **6.2** Verificar el criterio 5 con un script: recalcular todos los saldos
       desde cero y compararlos con los que devuelve la API.
-- [ ] **6.3** Documentar los endpoints en el README.
-- [ ] **6.4** Resolver las tres decisiones abiertas de la spec §11.
-- [ ] **6.5** Medir el `index` de cuentas con 10 000 movimientos, como se hizo
-      con el dashboard. Solo cachear el saldo si se pasa de 300 ms.
+- [x] **6.3** Documentar los endpoints en el README.
+- [x] **6.4** Resolver las tres decisiones abiertas de la spec §11.
+- [x] **6.5** Medido: **25,4 ms** de media con 10 000 movimientos, con el índice
+      `(cuenta_id, fecha)` y `type=ref`. Doce veces por debajo del objetivo de
+      300 ms, así que **no se cachea el saldo**.
+
+**Listo cuando:** los 13 criterios están verificados y anotados. ✅
+
+El script del 6.2 es el que más vale: recorre cada movimiento uno a uno, sin
+agregaciones, y compara con `saldoActual()`. Las 5 cuentas cuadran, incluida la
+de 10 000 movimientos. Es la prueba de la promesa central del módulo.
 
 ---
 

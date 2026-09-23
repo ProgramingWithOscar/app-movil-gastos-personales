@@ -2,11 +2,10 @@
 
 **Módulo:** 3 · Los lugares donde está el dinero
 **Origen:** [`sistema_gastos_personales.md`](../../sistema_gastos_personales.md) §3 Módulo 3, §8 (`accounts`), §10 (reglas 1, 2, 3, 7)
-**Estado:** propuesto
+**Estado:** implementado y verificado
 **Depende de:** [Usuarios y roles](../usuarios/spec.md) (implementado)
-**Desbloquea:** saldo total, dinero disponible y evolución del saldo en el
-[Dashboard](../dashboard/spec.md) (Fase B, pendiente), y el Módulo 6
-(transferencias)
+**Desbloquea:** saldo total y dinero disponible en el
+[Dashboard](../dashboard/spec.md) (hecho), y el Módulo 6 (transferencias)
 
 ---
 
@@ -197,8 +196,7 @@ dejar el campo preparado.
 
 ### Pantalla de cuentas
 
-Reemplaza el marcador de la pestaña **Movimientos** o entra como sección nueva
-—se decide en §11—.
+Se entra desde la tarjeta de saldo del dashboard y desde Perfil (§11.1).
 
 1. **Cabecera** con saldo total y, si hay tarjetas, la deuda.
 2. **Lista de cuentas**: icono con su color, nombre, tipo y saldo. La favorita
@@ -255,16 +253,77 @@ destruye la confianza en todos los números anteriores.
    es nuestra y se despliega a la vez, es asumible; conviene devolver un mensaje
    de error claro y no un fallo genérico.
 
-## 11. Decisiones abiertas
+## 11. Decisiones tomadas
 
-1. **¿Dónde vive la pantalla de cuentas?** La barra tiene cinco huecos y los
-   cinco están ocupados (Inicio, Movimientos, +, Presupuestos, Perfil). Opciones:
-   entrar como sección dentro de Perfil, sustituir Movimientos, o poner un acceso
-   desde la tarjeta de saldo del dashboard. *Propuesta: acceso desde la tarjeta
-   de saldo, y también dentro de Perfil.*
-2. **¿Se permite crear cuentas en otra moneda desde el principio?**
-   *Propuesta: no. Guardar el campo, pero restringirlo a la moneda principal
-   hasta que exista conversión.*
-3. **¿El saldo inicial puede editarse después de creada la cuenta?** Cambiarlo
-   reescribe el saldo actual y con él el histórico percibido. *Propuesta: sí,
-   pero avisando de que afecta a todos los saldos mostrados.*
+1. **La pantalla de cuentas no ocupa una pestaña.** Se entra desde la tarjeta de
+   saldo del dashboard —que es un botón— y desde Perfil. Los cinco huecos de la
+   barra siguen en Inicio, Movimientos, +, Presupuestos y Perfil. Las cuentas se
+   consultan de vez en cuando; los movimientos, a diario.
+
+2. **Solo se crean cuentas en la moneda principal.** El campo `moneda` existe y
+   se guarda, pero la validación lo restringe a la del usuario. Sumar monedas
+   distintas sin tasa de cambio da un número sin significado, y con tasa da uno
+   que envejece. Se abrirá cuando exista conversión (§7).
+
+3. **El saldo inicial se puede editar.** Es el caso real más común: uno lo pone
+   a ojo al crear la cuenta y lo corrige al mirar el banco. Cambiarlo desplaza
+   todos los saldos mostrados, así que conviene que la pantalla lo advierta
+   cuando se edita una cuenta que ya tiene movimientos —pendiente de añadir ese
+   aviso.
+
+## 12. Verificación
+
+### Los 13 criterios
+
+| # | Criterio | Evidencia |
+|---|---|---|
+| 1 | Crear cuenta con nombre, tipo y saldo | `curl` 201 · Bloque 2 |
+| 2 | Saldo = inicial + ingresos − gastos | script, 5 cuentas |
+| 3 | Un gasto baja el saldo, un ingreso lo sube | script de saldos |
+| 4 | Borrar un movimiento devuelve el saldo | Bloque 1: 600 000 → 720 000 |
+| 5 | Saldo recalculado desde cero siempre coincide | **script §12.2** |
+| 6 | Cuenta archivada no aparece ni suma | `curl`: saldo total pasó a 0 |
+| 7 | Cuenta archivada conserva historial | 8 movimientos intactos |
+| 8 | Borrar cuenta con movimientos falla | bloqueado por la FK |
+| 9 | Nadie usa cuentas de otro: 404 | `curl` con dos usuarios |
+| 10 | Tarjeta de crédito no resta del total | resumen: total 4 239 000, deuda 800 000 |
+| 11 | No hay dos cuentas con el mismo nombre | 422 con mensaje |
+| 12 | Movimiento sin cuenta → 422 | tres casos, mensajes en español |
+| 13 | La migración no alteró totales | `diff` sin diferencias |
+
+### 12.1 Rendimiento medido
+
+`GET /api/cuentas` con **10 000 movimientos**, cinco corridas:
+
+| | |
+|---|---|
+| Media | **25,4 ms** |
+| Objetivo | 300 ms |
+| Plan | `type=ref`, índice `movimientos_cuenta_id_fecha_index` |
+
+Doce veces por debajo del objetivo. **No se implementa caché del saldo**: sería
+una segunda fuente de verdad, con su invalidación, para resolver un problema que
+no existe. Si algún día aparece, la salida es una columna cacheada que se
+recalcula desde los movimientos, nunca una que los sustituya.
+
+### 12.2 El saldo cuadra con su historial
+
+Un script recorre **cada movimiento uno a uno**, sin agregaciones SQL, y compara
+con lo que devuelve `saldoActual()`:
+
+```
+cuenta                desde cero      servicio        estado
+Bancolombia           4,239,000.00    4,239,000.00    OK
+Visa Oro               -800,000.00     -800,000.00    OK
+Efectivo            -25,026,887.44  -25,026,887.44    OK   (10 000 movimientos)
+Efectivo               -198,000.00     -198,000.00    OK
+TEST CUENTA                   0.00            0.00    OK
+
+TODOS LOS SALDOS CUADRAN (5 cuentas)
+```
+
+También comprueba que el `saldo_total` del resumen es exactamente la suma de las
+cuentas de dinero activas, y que la deuda va aparte.
+
+Esta es la prueba del criterio 5, que es la promesa central del módulo: el saldo
+se deriva del historial, así que no puede desviarse de él.

@@ -167,6 +167,46 @@ Cada elemento vuelve evaluado, con `gastado`, `disponible`, `porcentaje`,
 Cada presupuesto se evalúa contra **su** período, no contra el que muestre el
 dashboard.
 
+#### Cuentas financieras
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/cuentas` | 🔒 Lista con saldo calculado (`?incluir_archivadas=1`) |
+| POST | `/cuentas` | 🔒 Crea |
+| GET | `/cuentas/{id}` | 🔒 Detalle |
+| PUT | `/cuentas/{id}` | 🔒 Actualiza |
+| DELETE | `/cuentas/{id}` | 🔒 Archiva, o borra si nunca tuvo movimientos |
+| PUT | `/cuentas/{id}/favorita` | 🔒 La deja preseleccionada al registrar |
+| GET | `/cuentas/{id}/movimientos` | 🔒 Historial paginado |
+
+```json
+{ "nombre": "Bancolombia", "tipo": "bancaria", "saldo_inicial": 2500000 }
+```
+
+Tipos: `efectivo`, `bancaria`, `ahorro`, `corriente`, `billetera`,
+`tarjeta_credito`, `tarjeta_debito`, `inversion`, `otra`. El `index` los
+devuelve en `tipos`, con icono y color, para no duplicar esa tabla en el cliente.
+
+El `index` incluye además un `resumen`:
+
+```json
+{ "saldo_total": 4239000, "deuda": 800000, "patrimonio_neto": 3439000 }
+```
+
+Detalles que importan al consumirlo:
+
+- **El saldo no se guarda, se calcula** desde los movimientos en cada lectura
+  (`saldo_inicial + ingresos − gastos`). Así no puede desviarse de su historial.
+  Medido: 25 ms con 10 000 movimientos.
+- **Las tarjetas de crédito no suman al `saldo_total`**: su saldo negativo va a
+  `deuda`. Sumarlas daría un número que no es ni lo que tienes ni lo que debes.
+- **`DELETE` archiva** si la cuenta tiene movimientos, y solo borra de verdad si
+  nunca tuvo ninguno. El mensaje de respuesta dice cuál de las dos ocurrió.
+- Una cuenta archivada **conserva su historial** pero deja de sumar y no admite
+  movimientos nuevos.
+- Solo se permiten cuentas en la moneda principal del usuario: sumar monedas
+  distintas sin tasa de cambio no significa nada.
+
 #### Administración
 
 | Método | Ruta | Descripción |
