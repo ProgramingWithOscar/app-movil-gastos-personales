@@ -23,14 +23,4 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
-    public function attributes(): array
-    {
-        return [
-            'email' => 'correo electrónico',
-            'password' => 'contraseña',
-        ];
-    }
 }

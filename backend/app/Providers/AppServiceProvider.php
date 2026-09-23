@@ -32,12 +32,18 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureRateLimiting(): void
     {
-        RateLimiter::for('auth', function (Request $request) {
+        // El mensaje del 429 lo genera el framework en inglés: se sustituye
+        // por uno propio, que además dice cuánto falta.
+        $aviso = fn (Request $request, array $cabeceras) => response()->json([
+            'message' => 'Demasiados intentos. Espera '.($cabeceras['Retry-After'] ?? 60).' segundos.',
+        ], 429, $cabeceras);
+
+        RateLimiter::for('auth', function (Request $request) use ($aviso) {
             $email = mb_strtolower((string) $request->input('email'));
 
             return [
-                Limit::perMinute(5)->by('auth-ip:'.$request->ip()),
-                Limit::perMinute(5)->by('auth-email:'.$email.'|'.$request->ip()),
+                Limit::perMinute(5)->by('auth-ip:'.$request->ip())->response($aviso),
+                Limit::perMinute(5)->by('auth-email:'.$email.'|'.$request->ip())->response($aviso),
             ];
         });
 

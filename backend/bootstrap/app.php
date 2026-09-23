@@ -18,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
+        // Después de `auth` no: el idioma debe estar puesto antes de que
+        // cualquier validación genere un mensaje. Va al final de la pila de
+        // API, que ya resolvió al usuario cuando hay token.
+        $middleware->api(append: [
+            \App\Http\Middleware\EstableceIdioma::class,
+        ]);
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
