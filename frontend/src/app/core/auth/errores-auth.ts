@@ -6,6 +6,26 @@ import { HttpErrorResponse } from '@angular/common/http';
  * Distingue explícitamente el fallo de red del de credenciales: son problemas
  * distintos y la persona necesita saber cuál tiene delante.
  */
+/**
+ * Los errores de validación del backend, uno por campo.
+ *
+ * Sirve para enseñar cada mensaje junto a su campo en vez de todos juntos
+ * arriba: un aviso lejos del campo que lo provoca obliga a adivinar cuál es.
+ */
+export function erroresPorCampo(error: unknown): Record<string, string> {
+  if (!(error instanceof HttpErrorResponse) || error.status !== 422) {
+    return {};
+  }
+
+  const errores = (error.error?.errors ?? {}) as Record<string, string[]>;
+
+  return Object.fromEntries(
+    Object.entries(errores)
+      .filter(([, mensajes]) => mensajes?.length)
+      .map(([campo, mensajes]) => [campo, mensajes[0]]),
+  );
+}
+
 export function mensajeDeError(error: unknown, porDefecto = 'No se pudo completar la operación.'): string {
   if (!(error instanceof HttpErrorResponse)) {
     return porDefecto;

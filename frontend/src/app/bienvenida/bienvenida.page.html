@@ -1,30 +1,42 @@
-<ion-content [fullscreen]="true" class="auth-pantalla">
-  <div class="auth-contenido bienvenida">
-    <div class="auth-marca">
-      <div class="auth-marca__icono">
-        <ion-icon name="wallet-outline"></ion-icon>
-      </div>
-      <h1 class="auth-marca__titulo">Gastos personales</h1>
-      <p class="auth-marca__lema">Sabe siempre en qué se te va el dinero</p>
+<ion-content [fullscreen]="true" class="onb-pantalla">
+  <div class="onb" [class.onb--listo]="listo()">
+    <div class="onb__barra">
+      @if (!esUltima()) {
+        <button type="button" class="onb__saltar" (click)="saltar()">Saltar</button>
+      }
     </div>
 
-    <ul class="ventajas">
-      @for (ventaja of ventajas; track ventaja.texto) {
-        <li class="ventaja">
-          <ion-icon [name]="ventaja.icono"></ion-icon>
-          <span>{{ ventaja.texto }}</span>
-        </li>
+    <div #pista class="onb__pista" (scroll)="alDesplazar()">
+      @for (pantalla of pantallas; track pantalla.imagen) {
+        <article class="onb__pantalla">
+          <img class="onb__ilustracion" [src]="pantalla.imagen" alt="" aria-hidden="true" />
+          <h1 class="onb__titulo">{{ pantalla.titulo }}</h1>
+          <p class="onb__texto">{{ pantalla.texto }}</p>
+        </article>
       }
-    </ul>
+    </div>
 
-    <div class="acciones">
-      <ion-button expand="block" class="auth-boton" routerLink="/registro">
-        Crear cuenta
+    <div class="onb__pie">
+      <div class="onb__puntos">
+        @for (pantalla of pantallas; track pantalla.imagen; let i = $index) {
+          <button
+            type="button"
+            class="onb__punto"
+            [class.onb__punto--activo]="i === actual()"
+            [attr.aria-current]="i === actual()"
+            [attr.aria-label]="'Ir a la pantalla ' + (i + 1) + ' de ' + pantallas.length"
+            (click)="irA(i)"
+          ></button>
+        }
+      </div>
+
+      <ion-button expand="block" class="auth-boton onb__principal" (click)="avanzar()">
+        {{ esUltima() ? 'Crear cuenta' : 'Siguiente' }}
       </ion-button>
 
-      <ion-button expand="block" fill="outline" class="auth-boton" routerLink="/login">
-        Ya tengo cuenta
-      </ion-button>
+      <!-- Siempre visible: quien ya tiene cuenta no debería tener que llegar al
+           final del onboarding para encontrar el login. -->
+      <a class="onb__secundario" routerLink="/login">Ya tengo cuenta</a>
     </div>
   </div>
 </ion-content>

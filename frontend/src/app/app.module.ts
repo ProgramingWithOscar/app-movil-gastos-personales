@@ -8,10 +8,11 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular/lazy';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService, authInterceptor } from './core/auth';
+import { SplashComponent } from './shared/splash.component';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot({
+  imports: [SplashComponent, BrowserModule, IonicModule.forRoot({
       // Material Design en todas las plataformas: un solo lenguaje visual,
       // como en Flutter. Sin esto, iOS usaría el modo cupertino.
       mode: 'md',

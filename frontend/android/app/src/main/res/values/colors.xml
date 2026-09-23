@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Mismo valor que la variable splash-fondo de
+      src/app/shared/splash.component.ts. Si cambia uno, cambia el otro: es lo
+      que hace invisible el relevo entre el splash nativo y el de la app.
+    -->
+    <color name="splash_fondo">#F3F9F6</color>
+</resources>

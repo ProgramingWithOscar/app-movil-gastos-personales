@@ -16,7 +16,17 @@
     </style>
 
 
+    <!--
+      Pantalla de arranque. `windowSplashScreenBackground` es la de Android 12+,
+      que la dibuja el sistema antes de que exista la actividad;
+      `android:background` cubre las versiones anteriores. Las dos apuntan al
+      mismo color para que no haya ningún cambio de tono al abrir la app.
+    -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_fondo</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
         <item name="android:background">@drawable/splash</item>
+        <!-- Fondo claro: los iconos de la barra de estado tienen que ser oscuros. -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

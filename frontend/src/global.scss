@@ -35,8 +35,34 @@ ion-toolbar {
 /* ── Pantallas de autenticación ───────────────────────────────────── */
 /* Compartidas por bienvenida, login y registro para no repetir estilos. */
 
+/*
+ * Estas pantallas se quedan en claro también en modo oscuro, igual que el
+ * splash y el onboarding: son la entrada a la app y comparten fondo para que
+ * una funde con la siguiente. Además el tema oscuro es una preferencia que vive
+ * en el perfil, y aquí todavía no hay sesión de la que leerla.
+ */
+:root {
+  --auth-fondo: #f3f9f6;
+  --auth-titulo: #123d2c;
+  --auth-suave: #4a7c64;
+  --auth-borde: #d8e8e0;
+}
+
 .auth-pantalla {
-  --background: var(--ion-background-color);
+  --background: var(--auth-fondo);
+}
+
+/* Sin esto la barra blanca del tema general corta el fondo por arriba. */
+.auth-cabecera ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  --color: var(--auth-titulo);
+}
+
+.auth-cabecera ion-back-button {
+  --color: var(--auth-titulo);
+  --icon-font-size: 24px;
+  color: var(--auth-titulo);
 }
 
 .auth-contenido {
@@ -54,6 +80,19 @@ ion-toolbar {
   margin-bottom: 1.5rem;
 }
 
+/* El icono de la app, el mismo del splash: las puertas de entrada llevan la
+   marca, no un icono genérico distinto en cada pantalla. */
+.auth-marca__logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.1rem;
+  display: block;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(5, 150, 105, 0.2);
+}
+
+/* Para pantallas que comunican un estado, no la marca: ahí el icono dice algo
+   que el logo no diría. */
 .auth-marca__icono {
   width: 56px;
   height: 56px;
@@ -71,27 +110,34 @@ ion-toolbar {
 
 .auth-marca__titulo {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--auth-titulo);
 }
 
 .auth-marca__lema {
-  margin: 0.3rem 0 0;
-  font-size: 0.92rem;
-  color: var(--gp-texto-suave);
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: var(--auth-suave);
 }
 
+/*
+ * Sin caja: los campos ya son blancos y una tarjeta blanca detrás no separa
+ * nada, solo añade un borde. El contraste lo pone el fondo verde.
+ */
 .auth-tarjeta {
   margin: 0;
-  border-radius: var(--gp-radio);
-  box-shadow: var(--gp-sombra);
-  border: 1px solid var(--gp-borde);
-  background: var(--gp-superficie);
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  /* ion-card recorta por defecto, y las etiquetas flotantes de los campos
+     sobresalen por encima del borde: sin esto se ven cortadas. */
+  overflow: visible;
 }
 
 .auth-tarjeta ion-card-content {
-  padding: 1.4rem 1.15rem 1.25rem;
+  padding: 0;
 }
 
 .auth-tarjeta__titulo {
@@ -123,14 +169,17 @@ ion-toolbar {
 
 .auth-campo {
   margin-bottom: 0.9rem;
+  --background: #ffffff;
+  --color: var(--auth-titulo);
+  --border-color: var(--auth-borde);
   --highlight-color-focused: var(--ion-color-primary);
-  --border-radius: var(--gp-radio-sm);
+  --border-radius: 12px;
   --padding-start: 12px;
 }
 
 .auth-campo ion-icon[slot='start'] {
   margin-inline-end: 10px;
-  color: var(--gp-texto-suave);
+  color: var(--auth-suave);
   font-size: 20px;
 }
 
@@ -153,7 +202,7 @@ ion-toolbar {
   gap: 0.15rem;
   margin-top: 1.25rem;
   font-size: 0.88rem;
-  color: var(--gp-texto-suave);
+  color: var(--auth-suave);
 }
 
 .auth-pie ion-button {

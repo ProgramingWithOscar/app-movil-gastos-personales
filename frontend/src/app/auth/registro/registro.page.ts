@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@ang
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 
-import { AuthService, mensajeDeError } from '../../core/auth';
+import { AuthService, erroresPorCampo, mensajeDeError } from '../../core/auth';
 
 /** Las mismas reglas que valida el backend, para avisar antes de enviar. */
 function contrasenaSegura(control: AbstractControl): ValidationErrors | null {
@@ -46,6 +46,13 @@ export class RegistroPage {
   readonly verClave = signal(false);
   readonly error = signal<string | null>(null);
 
+  /**
+   * Lo que el backend rechazó de la contraseña. Va aparte porque hay reglas
+   * que solo él puede comprobar —si apareció en filtraciones conocidas—, así
+   * que no se pueden anticipar en el formulario.
+   */
+  readonly errorClave = signal<string | null>(null);
+
   readonly form = this.fb.nonNullable.group(
     {
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
@@ -79,7 +86,12 @@ export class RegistroPage {
   );
 
   constructor() {
-    this.form.controls.password.valueChanges.subscribe((valor) => this.clave.set(valor ?? ''));
+    this.form.controls.password.valueChanges.subscribe((valor) => {
+      this.clave.set(valor ?? '');
+      // En cuanto la cambia, el rechazo del servidor ya no habla de lo que hay
+      // escrito: dejarlo puesto sería señalar un problema que quizá ya no está.
+      this.errorClave.set(null);
+    });
   }
 
   alternarClave(): void {
@@ -103,20 +115,26 @@ export class RegistroPage {
 
     this.enviando.set(true);
     this.error.set(null);
+    this.errorClave.set(null);
 
     try {
       await this.auth.registrar(this.form.getRawValue());
       await this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true });
 
       const toast = await this.toastCtrl.create({
-        message: 'Cuenta creada. Te enviamos un correo para verificarla.',
+        message: '¡Listo! Tu cuenta ya está creada.',
         duration: 3200,
         color: 'success',
       });
 
       await toast.present();
     } catch (error) {
-      this.error.set(mensajeDeError(error, 'No se pudo crear la cuenta.'));
+      const porCampo = erroresPorCampo(error);
+      const deLaClave = porCampo['password'] ?? null;
+      const otro = Object.entries(porCampo).find(([campo]) => campo !== 'password')?.[1];
+
+      this.errorClave.set(deLaClave);
+      this.error.set(otro ?? (deLaClave ? null : mensajeDeError(error, 'No se pudo crear la cuenta.')));
     } finally {
       this.enviando.set(false);
     }

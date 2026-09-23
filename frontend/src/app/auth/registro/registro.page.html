@@ -1,4 +1,4 @@
-<ion-header class="ion-no-border">
+<ion-header class="ion-no-border auth-cabecera">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/bienvenida" text=""></ion-back-button>
@@ -9,9 +9,7 @@
 <ion-content [fullscreen]="true" class="auth-pantalla">
   <div class="auth-contenido">
     <div class="auth-marca">
-      <div class="auth-marca__icono">
-        <ion-icon name="person-add-outline"></ion-icon>
-      </div>
+      <img class="auth-marca__logo" src="assets/imagenes/kuenta-icon.png" alt="" aria-hidden="true" />
       <h1 class="auth-marca__titulo">Crea tu cuenta</h1>
       <p class="auth-marca__lema">Empieza a controlar tus gastos hoy</p>
     </div>
@@ -65,12 +63,23 @@
             [type]="verClave() ? 'text' : 'password'"
             autocomplete="new-password"
             formControlName="password"
+            [class.ion-invalid]="!!errorClave()"
+            [class.ion-touched]="!!errorClave()"
           >
             <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
             <ion-button slot="end" fill="clear" (click)="alternarClave()" tabindex="-1" aria-label="Mostrar contraseña">
               <ion-icon slot="icon-only" [name]="verClave() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </ion-button>
           </ion-input>
+
+          <!-- El error de la contraseña se enseña aquí, pegado al campo, y no
+               en el aviso de arriba: así se ve de quién es el problema. -->
+          @if (errorClave()) {
+            <p class="clave-error" role="alert">
+              <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+              <span>{{ errorClave() }}</span>
+            </p>
+          }
 
           @if (fuerza() > 0) {
             <div class="fuerza">
@@ -81,9 +90,14 @@
               </div>
               <span class="fuerza__texto">{{ etiquetaFuerza() }}</span>
             </div>
-
-            <p class="requisitos">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
           }
+
+          <!-- Siempre visible, también la regla de las filtraciones: enterarse
+               de un requisito solo cuando te lo rechazan se siente arbitrario. -->
+          <p class="requisitos">
+            Mínimo 8 caracteres, con mayúscula, minúscula y número. Tampoco puede ser una
+            contraseña que ya se haya filtrado en otros sitios.
+          </p>
 
           <ion-input
             class="auth-campo"

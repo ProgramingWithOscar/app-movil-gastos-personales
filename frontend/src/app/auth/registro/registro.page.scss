@@ -14,7 +14,7 @@
     height: 4px;
     flex: 1;
     border-radius: 999px;
-    background: var(--gp-borde);
+    background: var(--auth-borde);
     transition: background-color 0.2s ease;
 
     &--activo {
@@ -33,7 +33,7 @@
   &__texto {
     font-size: 0.78rem;
     font-weight: 600;
-    color: var(--gp-texto-suave);
+    color: var(--auth-suave);
     min-width: 72px;
     text-align: right;
   }
@@ -42,6 +42,22 @@
 .requisitos {
   margin: 0 0 0.9rem;
   font-size: 0.78rem;
-  line-height: 1.35;
-  color: var(--gp-texto-suave);
+  line-height: 1.4;
+  color: var(--auth-suave);
+}
+
+.clave-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin: -0.4rem 0 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ion-color-danger);
+
+  ion-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 }

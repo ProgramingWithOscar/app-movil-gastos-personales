@@ -23,12 +23,19 @@ const config: CapacitorConfig = {
   appName: 'Gastos Personales',
   webDir: 'www',
   plugins: {
+    /**
+     * El splash nativo es solo el color de fondo de la marca, sin logo ni
+     * spinner: lo que se ve es el splash de la app, que sí está animado.
+     *
+     * `launchAutoHide: false` lo mantiene hasta que AppComponent lo oculta, ya
+     * con la WebView pintada. Así no hay ni un fotograma en blanco entre los
+     * dos, y como comparten fondo (#F3F9F6, también en `values/colors.xml`), el
+     * relevo no se nota.
+     */
     SplashScreen: {
       launchAutoHide: false,
-      backgroundColor: '#059669',
-      androidSpinnerStyle: 'small',
-      spinnerColor: '#ffffff',
-      showSpinner: true,
+      backgroundColor: '#F3F9F6',
+      showSpinner: false,
       androidScaleType: 'CENTER_CROP',
     },
   },

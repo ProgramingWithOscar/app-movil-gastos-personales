@@ -44,6 +44,14 @@ if (faltantes.length > 0) {
 
 const produccion = process.env.NODE_ENV === 'production' || process.argv.includes('--prod');
 
+// La versión que enseña el splash sale del `versionName` de Android, que es la
+// que el usuario ve en los ajustes del teléfono. Tenerla en dos sitios acaba
+// siempre igual: uno de los dos se queda viejo.
+const rutaGradle = resolve(raiz, 'android/app/build.gradle');
+const version = existsSync(rutaGradle)
+  ? (readFileSync(rutaGradle, 'utf8').match(/versionName\s+"([^"]+)"/)?.[1] ?? '0.0')
+  : '0.0';
+
 writeFileSync(
   destino,
   `// ARCHIVO GENERADO — no lo edites a mano.
@@ -52,6 +60,7 @@ export const environment = {
   production: ${produccion},
   apiUrl: '${vars['API_URL']}',
   nativeApiUrl: '${vars['API_URL_NATIVE']}',
+  version: '${version}',
 };
 `,
 );

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  El splash nativo es solo el color de fondo de la marca, sin logo.
+
+  Lo que ve el usuario es el splash de la app (src/app/shared/splash.component.ts),
+  que sí está animado. Este es únicamente el color que ocupa la pantalla entre
+  que Android abre la ventana y la WebView pinta: al ser el mismo fondo, el
+  relevo no se nota. Si aquí hubiera además un logo, se vería saltar de sitio al
+  entrar el de verdad.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/splash_fondo" />
+</shape>
