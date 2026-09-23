@@ -34,7 +34,6 @@ services:
   backend:
     build:
       context: ./backend
-    # El nombre es fijo porque la imagen de Caddy se construye a partir de ella.
     image: gastos-backend:latest
     container_name: gastos-backend
     restart: unless-stopped
@@ -68,9 +67,9 @@ services:
 
   web:
     build:
-      context: ./docker/nginx-prod
-      args:
-        IMAGEN_BACKEND: gastos-backend:latest
+      # El contexto es la raíz para poder copiar backend/public.
+      context: .
+      dockerfile: docker/nginx-prod/Dockerfile
     image: gastos-web:latest
     container_name: gastos-web
     restart: unless-stopped
