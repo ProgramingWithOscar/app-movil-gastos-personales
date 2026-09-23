@@ -158,6 +158,14 @@ class ResumenMovimientos
             ->selectRaw('categoria, SUM(monto) as total, COUNT(*) as cantidad')
             ->groupBy('categoria')
             ->orderByDesc('total')
+            // Desempate explícito. Con solo `total` dos categorías igualadas
+            // salían en el orden que quisiera la base, así que la "categoría
+            // dominante" del dashboard podía cambiar sola entre recargas sin
+            // que hubiera pasado nada. A igual gasto manda la que tiene más
+            // movimientos, y si también empatan, el alfabético: cualquiera de
+            // las dos vale, lo que no vale es que sea distinta cada vez.
+            ->orderByDesc('cantidad')
+            ->orderBy('categoria')
             ->get();
     }
 

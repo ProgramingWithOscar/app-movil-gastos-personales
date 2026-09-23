@@ -54,7 +54,10 @@ class ResumenMovimientosTest extends TestCase
 
         $this->assertSame(200000.0, $datos['total']);
         $this->assertSame(3, $datos['movimientos']);
-        $this->assertSame('servicios', $datos['categoria_principal']['categoria']);
+        // Las dos suman 100 000: el empate lo rompe el número de movimientos,
+        // y alimentación tiene dos. Antes esto esperaba `servicios` y pasaba
+        // por el orden que devolviera la base, no porque estuviera decidido.
+        $this->assertSame('alimentacion', $datos['categoria_principal']['categoria']);
         $this->assertSame(50.0, $datos['por_categoria'][0]['porcentaje']);
         $this->assertSame(50.0, $datos['por_categoria'][1]['porcentaje']);
     }

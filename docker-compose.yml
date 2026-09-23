@@ -30,7 +30,10 @@ services:
       APP_NAME: "Gastos Personales"
       APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: ${APP_DEBUG:-true}
-      APP_KEY: ${APP_KEY:-}
+      # APP_KEY no se inyecta a propósito: la pone backend/.env, que está
+      # montado. Pasarla vacía desde aquí la dejaba definida-pero-vacía en
+      # el contenedor, y Dotenv no sobrescribe lo que ya existe, así que la
+      # del .env se ignoraba y la app corría sin clave de cifrado.
       APP_URL: http://localhost:8200
       DB_CONNECTION: mysql
       DB_HOST: db

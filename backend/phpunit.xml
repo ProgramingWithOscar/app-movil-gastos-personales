@@ -19,6 +19,10 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <!-- Clave fija y solo de pruebas: la suite no debe depender de que
+             exista un .env con APP_KEY. Nunca sale de aquí. -->
+        <env name="APP_KEY" value="base64:zJ0hK4l9QeXqN2vR7mT5wY8pA3sD6fG1hJ4kL7nB0cE="/>
+        <env name="APP_LOCALE" value="es"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
