@@ -20,8 +20,13 @@ internet ─► main_nginx (80/443, certificados)
 ```
 
 `gastos-web` **no se asoma a internet**. Solo lo alcanza `main_nginx`, por
-nombre de contenedor a través de una red Docker compartida. También se publica
-en `127.0.0.1:8300` para poder probarlo desde el propio servidor.
+nombre de contenedor a través de la red `valiu_net`. También se publica en
+`127.0.0.1:8300` para poder probarlo desde el propio servidor.
+
+> Esto se aparta de cómo está montado `cv-ai.otech-labs.com`, que publica su
+> puerto 8084 en `0.0.0.0` y el proxy le habla por `172.17.0.1:8084`. Funciona,
+> pero deja la app accesible por HTTP directo en `85.31.224.173:8084`, saltándose
+> el certificado. Hablando por nombre de contenedor no hace falta abrir nada.
 
 > **Por qué no un Caddy propio:** habría querido los puertos 80 y 443, que ya
 > están ocupados. Arrancarlo habría tumbado todo lo demás.
@@ -56,15 +61,8 @@ cp .env.production.example .env
 nano .env
 ```
 
-Averigua el nombre de la red del proxy y dónde viven sus vhosts:
-
-```bash
-docker inspect main_nginx --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'
-docker inspect main_nginx --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{"\n"}}{{end}}'
-```
-
-El primero va en `RED_PROXY`. El segundo te dice en qué carpeta del host dejar
-el vhost del paso 6.
+`RED_PROXY` ya viene con `valiu_net`, que es la red del `main_nginx` de este
+servidor. Solo faltan la clave y las contraseñas.
 
 Genera la clave de la aplicación y las contraseñas:
 
@@ -99,18 +97,22 @@ Si eso funciona, el stack está bien y lo que quede por resolver es del proxy.
 
 ## 5. Certificado
 
-```bash
-certbot certonly --webroot -w /var/www/certbot -d kuenta.otech-labs.com
-```
+El webroot de este servidor es el de valiu, que es lo que `main_nginx` sirve
+como `/var/www/certbot`:
 
-Ajusta `-w` a la ruta que usen tus otros dominios. Míralo en el vhost de
-`cv-ai.otech-labs.com`, que ya funciona así.
+```bash
+certbot certonly --webroot -w /var/www/valiu-investments/public/certbot \
+  -d kuenta.otech-labs.com
+```
 
 ## 6. Publicar el subdominio
 
-Copia [`docker/nginx-prod/vhost-main-nginx.conf`](docker/nginx-prod/vhost-main-nginx.conf)
-a la carpeta de configuración de `main_nginx` (la que tiene montada desde el
-host) y recarga:
+```bash
+cp docker/nginx-prod/vhost-main-nginx.conf \
+   /var/www/nginx-proxy/sites/kuenta.otech-labs.com.conf
+```
+
+Y recarga:
 
 ```bash
 docker exec main_nginx nginx -t      # valida antes de aplicar
