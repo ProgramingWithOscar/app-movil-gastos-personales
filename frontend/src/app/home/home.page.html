@@ -338,6 +338,84 @@
   </ion-modal>
 
   <ion-modal
+    class="hoja hoja--cuenta"
+    [isOpen]="nuevaCuentaAbierta()"
+    [breakpoints]="[0, 0.8]"
+    [initialBreakpoint]="0.8"
+    [handle]="true"
+    (didDismiss)="cerrarNuevaCuenta()"
+  >
+    <ng-template>
+      <div class="hoja__cuerpo interactivo">
+        <header class="hoja__cabecera">
+          <h2 class="hoja__titulo">Nueva cuenta</h2>
+          <ion-button fill="clear" size="small" (click)="cerrarNuevaCuenta()">Cancelar</ion-button>
+        </header>
+
+        <form [formGroup]="formCuenta" (ngSubmit)="guardarCuenta()">
+          <ion-input
+            class="campo"
+            label="Nombre"
+            labelPlacement="floating"
+            fill="outline"
+            formControlName="nombre"
+            placeholder="Nequi, Bancolombia, Efectivo…"
+            autocapitalize="words"
+          ></ion-input>
+
+          <p class="etiqueta-seccion">Tipo</p>
+          <div class="chips">
+            @for (tipo of tiposCuenta(); track tipo.id) {
+              <button
+                type="button"
+                class="chip"
+                [class.chip--activa]="formCuenta.controls.tipo.value === tipo.id"
+                [style.--tono]="tipo.color"
+                (click)="elegirTipoCuenta(tipo.id)"
+              >
+                <ion-icon [name]="tipo.icono"></ion-icon>
+                {{ tipo.nombre }}
+              </button>
+            }
+          </div>
+
+          <p class="etiqueta-seccion">Saldo actual</p>
+          <div class="monto-campo monto-campo--saldo">
+            <span class="monto-campo__moneda">$</span>
+            <input
+              class="monto-campo__input"
+              type="text"
+              inputmode="numeric"
+              placeholder="0"
+              [value]="saldoTexto()"
+              (input)="alEscribirSaldo($event)"
+              aria-label="Saldo actual"
+            />
+          </div>
+
+          <p class="nota-saldo">
+            Lo que hay ahora en esa cuenta. En una tarjeta de crédito, escribe lo que debes con un
+            signo menos delante.
+          </p>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            class="boton-guardar"
+            [disabled]="formCuenta.invalid || creandoCuenta()"
+          >
+            @if (creandoCuenta()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            } @else {
+              Crear cuenta
+            }
+          </ion-button>
+        </form>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal
     class="hoja hoja--formulario"
     [isOpen]="modalAbierto()"
     [breakpoints]="[0, 0.7, 0.95]"
@@ -382,12 +460,17 @@
                   {{ cuenta.nombre }}
                 </button>
               }
+
+              <button type="button" class="chip chip--nueva" (click)="abrirNuevaCuenta()">
+                <ion-icon name="add"></ion-icon>
+                Nueva
+              </button>
             </div>
           } @else {
             <div class="sin-cuentas">
               <ion-icon name="alert-circle-outline"></ion-icon>
               <span>Necesitas una cuenta para registrar movimientos.</span>
-              <ion-button size="small" fill="clear" routerLink="/cuentas" (click)="cerrarModal()">
+              <ion-button size="small" fill="clear" (click)="abrirNuevaCuenta()">
                 Crear una
               </ion-button>
             </div>

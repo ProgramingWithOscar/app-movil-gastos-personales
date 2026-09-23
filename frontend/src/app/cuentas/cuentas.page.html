@@ -75,7 +75,14 @@
                   <ion-icon name="star" class="favorita" aria-label="Cuenta por defecto"></ion-icon>
                 }
               </h2>
-              <p>{{ cuenta.tipo_nombre }} · {{ cuenta.movimientos }} movimiento(s)</p>
+              <p>
+                {{ cuenta.tipo_nombre }} ·
+                @if ((cuenta.movimientos ?? 0) > 0) {
+                  {{ cuenta.movimientos }} movimiento(s)
+                } @else {
+                  sin movimientos
+                }
+              </p>
             </ion-label>
 
             <ion-note slot="end" class="saldo" [class.saldo--deuda]="cuenta.saldo_actual < 0">
@@ -92,8 +99,13 @@
             <ion-item-option (click)="abrir(cuenta)">
               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-item-option>
+            <!-- Sin movimientos se borra de verdad; con historial se archiva.
+                 El icono lo dice antes de tocarlo. -->
             <ion-item-option color="danger" (click)="confirmarArchivar(cuenta)">
-              <ion-icon slot="icon-only" name="archive-outline"></ion-icon>
+              <ion-icon
+                slot="icon-only"
+                [name]="(cuenta.movimientos ?? 0) > 0 ? 'archive-outline' : 'trash-outline'"
+              ></ion-icon>
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>

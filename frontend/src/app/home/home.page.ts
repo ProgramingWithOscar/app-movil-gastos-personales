@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { AccionesService } from '../core/acciones.service';
 import { AuthService, mensajeDeError } from '../core/auth';
-import { Cuenta } from '../core/cuenta.model';
+import { Cuenta, TipoCuenta, TipoCuentaCatalogo } from '../core/cuenta.model';
 import { CuentasService } from '../core/cuentas.service';
 import { Dashboard, PresupuestoEvaluado } from '../core/dashboard.model';
 import { DashboardService } from '../core/dashboard.service';
@@ -145,6 +145,13 @@ export class HomePage implements OnInit {
 
   /** Cuentas activas, para elegir de dónde sale o entra el dinero. */
   readonly cuentas = signal<Cuenta[]>([]);
+
+  /** Catálogo de tipos con su icono y color, tal como lo envía el backend. */
+  readonly tiposCuenta = signal<TipoCuentaCatalogo[]>([]);
+
+  readonly nuevaCuentaAbierta = signal(false);
+  readonly creandoCuenta = signal(false);
+  readonly saldoTexto = signal('');
 
   private readonly formatoMiles = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
   private abiertaEn = 0;
@@ -299,7 +306,10 @@ export class HomePage implements OnInit {
 
   private cargarCuentas(): void {
     this.cuentasService.listar().subscribe({
-      next: ({ data }) => this.cuentas.set(data),
+      next: ({ data, tipos }) => {
+        this.cuentas.set(data);
+        this.tiposCuenta.set(tipos);
+      },
       // Sin cuentas no se puede registrar nada, pero el dashboard sigue
       // leyéndose: no tiene sentido tumbar la pantalla entera por esto.
       error: () => this.cuentas.set([]),
@@ -314,6 +324,10 @@ export class HomePage implements OnInit {
     if (this.dashboard() !== null) {
       this.cargar();
     }
+
+    // También las cuentas: si acabas de crear una en su pantalla, tiene que
+    // estar disponible al registrar sin recargar la app.
+    this.cargarCuentas();
   }
 
   cargar(evento?: { target: { complete: () => void } }): void {
@@ -446,6 +460,79 @@ export class HomePage implements OnInit {
   cerrarModal(): void {
     this.modalAbierto.set(false);
     this.formularioListo.set(false);
+  }
+
+  readonly formCuenta = this.fb.nonNullable.group({
+    nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
+    tipo: ['efectivo' as TipoCuenta, [Validators.required]],
+    saldo_inicial: [0],
+  });
+
+  /**
+   * Crea una cuenta sin salir del formulario de movimiento.
+   *
+   * Pide lo mismo que la pantalla de cuentas —nombre, tipo y saldo— para que
+   * quede bien creada de una vez. Irse a otra pantalla, crearla y volver
+   * perdiendo lo ya escrito es el camino largo para algo que ocurre justo
+   * cuando te falta una cuenta.
+   */
+  abrirNuevaCuenta(): void {
+    this.saldoTexto.set('');
+    this.formCuenta.reset({ nombre: '', tipo: 'efectivo', saldo_inicial: 0 });
+    this.nuevaCuentaAbierta.set(true);
+  }
+
+  cerrarNuevaCuenta(): void {
+    this.nuevaCuentaAbierta.set(false);
+  }
+
+  elegirTipoCuenta(tipo: TipoCuenta): void {
+    this.formCuenta.controls.tipo.setValue(tipo);
+  }
+
+  /** Acepta el signo: una tarjeta de crédito arranca en negativo. */
+  alEscribirSaldo(evento: Event): void {
+    const entrada = evento.target as HTMLInputElement;
+    const negativo = entrada.value.trim().startsWith('-');
+    const digitos = entrada.value.replace(/\D/g, '');
+
+    if (digitos === '') {
+      this.saldoTexto.set(negativo ? '-' : '');
+      this.formCuenta.controls.saldo_inicial.setValue(0);
+      entrada.value = negativo ? '-' : '';
+      return;
+    }
+
+    const numero = Number(digitos) * (negativo ? -1 : 1);
+    const formateado = this.formatoMiles.format(numero);
+
+    this.saldoTexto.set(formateado);
+    this.formCuenta.controls.saldo_inicial.setValue(numero);
+    entrada.value = formateado;
+  }
+
+  guardarCuenta(): void {
+    if (this.formCuenta.invalid) {
+      this.formCuenta.markAllAsTouched();
+      return;
+    }
+
+    this.creandoCuenta.set(true);
+
+    this.cuentasService.crear(this.formCuenta.getRawValue()).subscribe({
+      next: ({ data }) => {
+        this.cuentas.update((actuales) => [...actuales, data]);
+        // Queda elegida: es la que acabas de crear para este movimiento.
+        this.form.controls.cuenta_id.setValue(data.id);
+        this.creandoCuenta.set(false);
+        this.cerrarNuevaCuenta();
+        void this.avisar(`Cuenta "${data.nombre}" creada.`, 'success');
+      },
+      error: (error) => {
+        this.creandoCuenta.set(false);
+        void this.avisar(mensajeDeError(error, 'No se pudo crear la cuenta.'), 'danger');
+      },
+    });
   }
 
   private cuentaPorDefecto(): number | null {

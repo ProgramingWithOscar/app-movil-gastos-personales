@@ -12,6 +12,21 @@ android {
         // Solo el APK de desarrollo habla HTTP plano. El de producción va a
         // HTTPS, así que el permiso se queda cerrado.
         manifestPlaceholders = [usesCleartextTraffic: (System.getenv("CAP_ALLOW_HTTP") == "true") ? "true" : "false"]
+
+        // El APK de desarrollo se instala como una app aparte, para que pueda
+        // convivir con el de producción en el mismo teléfono. Si compartieran
+        // identificador, instalar uno borraría el otro.
+        def esDesarrollo = System.getenv("CAP_ALLOW_HTTP") == "true"
+        def idApp = esDesarrollo ? "co.gastospersonales.app.dev" : "co.gastospersonales.app"
+
+        if (esDesarrollo) {
+            applicationIdSuffix ".dev"
+        }
+
+        resValue "string", "app_name", esDesarrollo ? "Kuenta dev" : "Kuenta"
+        resValue "string", "title_activity_main", esDesarrollo ? "Kuenta dev" : "Kuenta"
+        resValue "string", "package_name", idApp
+        resValue "string", "custom_url_scheme", idApp
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

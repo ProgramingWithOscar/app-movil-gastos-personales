@@ -162,7 +162,7 @@ export class CuentasPage {
       header: tieneHistorial ? 'Archivar cuenta' : 'Eliminar cuenta',
       message: tieneHistorial
         ? `"${cuenta.nombre}" tiene ${cuenta.movimientos} movimiento(s). Se archivará: deja de sumar en tu saldo y no podrás registrar en ella, pero conserva todo su historial.`
-        : `"${cuenta.nombre}" no tiene movimientos, así que se eliminará por completo.`,
+        : `"${cuenta.nombre}" no tiene ningún movimiento, así que se eliminará por completo. Esta acción no se puede deshacer.`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {

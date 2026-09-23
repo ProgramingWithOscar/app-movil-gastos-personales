@@ -828,6 +828,22 @@
   }
 }
 
+.monto-campo--saldo {
+  padding: 0.25rem 0 0.75rem;
+
+  .monto-campo__input {
+    font-size: 2rem;
+    width: 200px;
+  }
+}
+
+.nota-saldo {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--gp-texto-suave);
+}
+
 .etiqueta-seccion {
   margin: 0 0 0.6rem;
   font-size: 0.82rem;
@@ -869,6 +885,15 @@
     border-color: var(--tono);
     background: color-mix(in srgb, var(--tono) 12%, transparent);
     font-weight: 600;
+  }
+
+  &--nueva {
+    border-style: dashed;
+    color: var(--gp-texto-suave);
+
+    ion-icon {
+      color: var(--gp-texto-suave);
+    }
   }
 }
 
