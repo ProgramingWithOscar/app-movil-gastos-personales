@@ -16,3 +16,6 @@
 
 # Credenciales locales: no van al repositorio
 /CREDENCIALES.md
+
+# APKs compilados: son artefactos, se regeneran con `npm run apk`.
+*.apk
