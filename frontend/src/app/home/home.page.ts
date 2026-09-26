@@ -15,7 +15,7 @@ import { MovimientosService } from '../core/movimientos.service';
 import { TonoIndicador } from './indicador/indicador.component';
 
 interface AccesoRapido {
-  id: 'cuentas' | 'nueva-cuenta';
+  id: 'cuentas';
   titulo: string;
   icono: string;
 }
@@ -85,7 +85,6 @@ export class HomePage implements OnInit {
    */
   readonly accesosRapidos: AccesoRapido[] = [
     { id: 'cuentas', titulo: 'Mis cuentas', icono: 'wallet-outline' },
-    { id: 'nueva-cuenta', titulo: 'Nueva cuenta', icono: 'add-circle-outline' },
   ];
 
   readonly rapidoAbierto = signal(false);
@@ -496,11 +495,7 @@ export class HomePage implements OnInit {
 
     if (id === 'cuentas') {
       void this.router.navigateByUrl('/cuentas');
-
-      return;
     }
-
-    this.abrirNuevaCuenta();
   }
 
   abrirNuevaCuenta(): void {

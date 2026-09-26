@@ -64,6 +64,32 @@
     (click)="cerrarRapido()"
   ></button>
 
+  <ion-fab
+    class="rapido"
+    slot="fixed"
+    vertical="bottom"
+    horizontal="end"
+    [activated]="rapidoAbierto()"
+  >
+    <ion-fab-button aria-label="Accesos rápidos" (click)="alternarRapido()">
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="top">
+      @for (acceso of accesosRapidos; track acceso.id; let i = $index) {
+        <ion-fab-button
+          size="small"
+          [style.--angulo]="anguloDelAcceso(i)"
+          [attr.data-titulo]="acceso.titulo"
+          [attr.aria-label]="acceso.titulo"
+          (click)="usarAcceso(acceso.id)"
+        >
+          <ion-icon [name]="acceso.icono"></ion-icon>
+        </ion-fab-button>
+      }
+    </ion-fab-list>
+  </ion-fab>
+
 
 <ion-content [fullscreen]="true" class="pantalla">
 
@@ -547,30 +573,5 @@
 
        El icono es genérico a propósito: esto va a crecer con más destinos, y
        uno de billetera prometería que solo lleva a cuentas. -->
-  <ion-fab
-    class="rapido"
-    slot="fixed"
-    vertical="bottom"
-    horizontal="end"
-    [activated]="rapidoAbierto()"
-  >
-    <ion-fab-button aria-label="Accesos rápidos" (click)="alternarRapido()">
-      <ion-icon name="apps-outline"></ion-icon>
-    </ion-fab-button>
-
-    <ion-fab-list side="top">
-      @for (acceso of accesosRapidos; track acceso.id; let i = $index) {
-        <ion-fab-button
-          size="small"
-          [style.--angulo]="anguloDelAcceso(i)"
-          [attr.data-titulo]="acceso.titulo"
-          [attr.aria-label]="acceso.titulo"
-          (click)="usarAcceso(acceso.id)"
-        >
-          <ion-icon [name]="acceso.icono"></ion-icon>
-        </ion-fab-button>
-      }
-    </ion-fab-list>
-  </ion-fab>
 
 </ion-content>

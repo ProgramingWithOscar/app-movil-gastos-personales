@@ -929,11 +929,24 @@
  * trae: el fondo borroso y que las opciones salgan en arco en vez de en fila.
  */
 
+/*
+ * Fuera de ion-content, igual que el velo, y por encima de él.
+ *
+ * Con el fab dentro del contenido, el velo —que tiene que estar fuera para
+ * tapar el encabezado— le quedaba encima, y el aspa no recibía el toque: se lo
+ * comía el velo, que apagaba el desenfoque y dejaba las opciones abiertas.
+ * Fuera de ion-content hay que poner la posición a mano, porque `vertical` y
+ * `horizontal` de ion-fab cuentan con el contenedor del contenido.
+ */
 .rapido {
   --radio: 104px;
 
+  position: fixed;
+  right: 16px;
   /* Por encima de la barra de pestañas, que mide 56 px. */
-  margin-bottom: 30px;
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  z-index: 12;
+  margin: 0;
 }
 
 /* Fuera de ion-content, hermano del encabezado: desde dentro del contenido
@@ -972,6 +985,15 @@
 ion-fab-list.fab-list-side-top {
   margin: 0;
   bottom: 0;
+
+  /* Al colocar los botones en absoluto, la lista se extiende por encima del
+     disparador y le robaba el toque: el aspa no cerraba nada. Que los clics la
+     atraviesen y solo los recojan sus botones. */
+  pointer-events: none;
+}
+
+ion-fab-list ion-fab-button {
+  pointer-events: auto;
 }
 
 ion-fab-list ion-fab-button {
