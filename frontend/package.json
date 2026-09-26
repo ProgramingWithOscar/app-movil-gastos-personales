@@ -21,7 +21,13 @@
     "prebuild:prod": "node scripts/set-env.mjs --prod",
     "apk": "npm run sync && cd android && ./gradlew assembleDebug",
     "apk:dev": "CAP_SERVER_URL=http://10.0.2.2:8100 npm run sync && cd android && ./gradlew assembleDebug",
-    "apk:lan": "CAP_ALLOW_HTTP=true npm run sync && cd android && ./gradlew assembleDebug"
+    "apk:lan": "CAP_ALLOW_HTTP=true npm run sync && cd android && ./gradlew assembleDebug",
+    "apk:prod": "API_URL=https://kuenta.otech-labs.com/api API_URL_NATIVE=https://kuenta.otech-labs.com/api npm run sync && cd android && ./gradlew assembleDebug",
+    "postapk": "node scripts/set-env.mjs",
+    "postapk:dev": "node scripts/set-env.mjs",
+    "postapk:lan": "node scripts/set-env.mjs",
+    "postapk:prod": "node scripts/set-env.mjs",
+    "postsync": "node scripts/set-env.mjs"
   },
   "private": true,
   "dependencies": {
