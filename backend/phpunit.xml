@@ -17,24 +17,51 @@
             <directory>app</directory>
         </include>
     </source>
+    <!--
+      force="true" en todas: sin él PHPUnit no pisa una variable que ya
+      exista en el entorno del proceso, y docker-compose inyecta
+      DB_CONNECTION=mysql en el contenedor. El sqlite en memoria de aquí
+      se ignoraba y la suite corría contra la base de desarrollo, que
+      RefreshDatabase trunca. Ya pasó una vez.
+
+      Y van duplicadas como <server> porque Laravel lee $_SERVER antes que
+      $_ENV: con solo <env>, $_ENV decía sqlite y env() seguía devolviendo
+      el mysql que docker había dejado en $_SERVER.
+    -->
     <php>
-        <env name="APP_ENV" value="testing"/>
+        <env name="APP_ENV" value="testing" force="true"/>
         <!-- Clave fija y solo de pruebas: la suite no debe depender de que
              exista un .env con APP_KEY. Nunca sale de aquí. -->
-        <env name="APP_KEY" value="base64:zJ0hK4l9QeXqN2vR7mT5wY8pA3sD6fG1hJ4kL7nB0cE="/>
-        <env name="APP_LOCALE" value="es"/>
-        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="BROADCAST_CONNECTION" value="null"/>
-        <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="PULSE_ENABLED" value="false"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="APP_KEY" value="base64:zJ0hK4l9QeXqN2vR7mT5wY8pA3sD6fG1hJ4kL7nB0cE=" force="true"/>
+        <env name="APP_LOCALE" value="es" force="true"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <env name="BCRYPT_ROUNDS" value="4" force="true"/>
+        <env name="BROADCAST_CONNECTION" value="null" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <env name="PULSE_ENABLED" value="false" force="true"/>
+        <env name="TELESCOPE_ENABLED" value="false" force="true"/>
+        <env name="NIGHTWATCH_ENABLED" value="false" force="true"/>
+        <server name="APP_ENV" value="testing" force="true"/>
+        <server name="APP_KEY" value="base64:zJ0hK4l9QeXqN2vR7mT5wY8pA3sD6fG1hJ4kL7nB0cE=" force="true"/>
+        <server name="APP_LOCALE" value="es" force="true"/>
+        <server name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <server name="BCRYPT_ROUNDS" value="4" force="true"/>
+        <server name="BROADCAST_CONNECTION" value="null" force="true"/>
+        <server name="CACHE_STORE" value="array" force="true"/>
+        <server name="DB_CONNECTION" value="sqlite" force="true"/>
+        <server name="DB_DATABASE" value=":memory:" force="true"/>
+        <server name="DB_URL" value="" force="true"/>
+        <server name="MAIL_MAILER" value="array" force="true"/>
+        <server name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <server name="SESSION_DRIVER" value="array" force="true"/>
+        <server name="PULSE_ENABLED" value="false" force="true"/>
+        <server name="TELESCOPE_ENABLED" value="false" force="true"/>
+        <server name="NIGHTWATCH_ENABLED" value="false" force="true"/>
     </php>
 </phpunit>

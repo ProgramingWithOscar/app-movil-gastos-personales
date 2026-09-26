@@ -24,5 +24,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Administrador',
             'email' => 'admin@gastos.test',
         ]);
+
+        // Cuentas, movimientos y presupuestos, para que la app abra con datos.
+        $this->call(DatosDemoSeeder::class);
     }
 }
