@@ -54,6 +54,17 @@
   </header>
 </ion-header>
 
+  <button
+    type="button"
+    class="velo-rapido"
+    [class.velo-rapido--visible]="rapidoAbierto()"
+    [attr.tabindex]="rapidoAbierto() ? 0 : -1"
+    [attr.aria-hidden]="!rapidoAbierto()"
+    aria-label="Cerrar accesos rápidos"
+    (click)="cerrarRapido()"
+  ></button>
+
+
 <ion-content [fullscreen]="true" class="pantalla">
 
   <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
@@ -529,4 +540,37 @@
       </div>
     </ng-template>
   </ion-modal>
+
+  <!-- Accesos rápidos. Viven aquí y no en la barra de pestañas porque sus
+       cinco huecos están ocupados, y cuentas era lo único que obligaba a pasar
+       por el perfil o a acertarle a la tarjeta de saldo.
+
+       El icono es genérico a propósito: esto va a crecer con más destinos, y
+       uno de billetera prometería que solo lleva a cuentas. -->
+  <ion-fab
+    class="rapido"
+    slot="fixed"
+    vertical="bottom"
+    horizontal="end"
+    [activated]="rapidoAbierto()"
+  >
+    <ion-fab-button aria-label="Accesos rápidos" (click)="alternarRapido()">
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="top">
+      @for (acceso of accesosRapidos; track acceso.id; let i = $index) {
+        <ion-fab-button
+          size="small"
+          [style.--angulo]="anguloDelAcceso(i)"
+          [attr.data-titulo]="acceso.titulo"
+          [attr.aria-label]="acceso.titulo"
+          (click)="usarAcceso(acceso.id)"
+        >
+          <ion-icon [name]="acceso.icono"></ion-icon>
+        </ion-fab-button>
+      }
+    </ion-fab-list>
+  </ion-fab>
+
 </ion-content>

@@ -14,6 +14,12 @@ import { CategoriaResumen, Movimiento, Periodo, TipoMovimiento } from '../core/m
 import { MovimientosService } from '../core/movimientos.service';
 import { TonoIndicador } from './indicador/indicador.component';
 
+interface AccesoRapido {
+  id: 'cuentas' | 'nueva-cuenta';
+  titulo: string;
+  icono: string;
+}
+
 interface AccionRapida {
   id: 'gasto' | 'ingreso' | 'transferencia';
   titulo: string;
@@ -72,6 +78,17 @@ export class HomePage implements OnInit {
     { id: 'ingreso', titulo: 'Ingreso', descripcion: 'Dinero que entra', icono: 'arrow-up-outline', color: '#059669', disponible: true },
     { id: 'transferencia', titulo: 'Transferencia', descripcion: 'Entre tus cuentas', icono: 'swap-horizontal-outline', color: '#0284c7', disponible: false },
   ];
+
+  /**
+   * Accesos del botón flotante. Los dos van a cuentas, que es lo único que la
+   * barra de pestañas no alcanza: sus cinco huecos están ocupados.
+   */
+  readonly accesosRapidos: AccesoRapido[] = [
+    { id: 'cuentas', titulo: 'Mis cuentas', icono: 'wallet-outline' },
+    { id: 'nueva-cuenta', titulo: 'Nueva cuenta', icono: 'add-circle-outline' },
+  ];
+
+  readonly rapidoAbierto = signal(false);
 
   readonly periodo = signal<Periodo>('mes');
   readonly vista = signal<TipoMovimiento>('gasto');
@@ -451,6 +468,41 @@ export class HomePage implements OnInit {
    * perdiendo lo ya escrito es el camino largo para algo que ocurre justo
    * cuando te falta una cuenta.
    */
+  /**
+   * Reparte los accesos en un arco sobre el botón, que está abajo a la derecha.
+   * El arco va de −95° (arriba) a −175° (izquierda): hacia la derecha de la
+   * vertical no hay sitio, se salen de la pantalla.
+   *
+   * Se calcula en vez de escribirse a mano para que añadir un acceso no
+   * obligue a recolocar los demás. El arco da para cuatro o cinco; a partir de
+   * ahí se pisan y conviene pasar a la lista en columna de `ion-fab-list`.
+   */
+  anguloDelAcceso(indice: number): number {
+    const reparto = 80 / Math.max(1, this.accesosRapidos.length - 1);
+
+    return -95 - indice * reparto;
+  }
+
+  alternarRapido(): void {
+    this.rapidoAbierto.update((abierto) => !abierto);
+  }
+
+  cerrarRapido(): void {
+    this.rapidoAbierto.set(false);
+  }
+
+  usarAcceso(id: AccesoRapido['id']): void {
+    this.cerrarRapido();
+
+    if (id === 'cuentas') {
+      void this.router.navigateByUrl('/cuentas');
+
+      return;
+    }
+
+    this.abrirNuevaCuenta();
+  }
+
   abrirNuevaCuenta(): void {
     this.saldoTexto.set('');
     this.formCuenta.reset({ nombre: '', tipo: 'efectivo', saldo_inicial: 0 });

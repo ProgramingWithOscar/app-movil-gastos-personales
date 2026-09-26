@@ -921,3 +921,102 @@
     height: 21px;
   }
 }
+
+/* ── Accesos rápidos ──────────────────────────────────────────────── */
+
+/*
+ * El botón, su estado y la lista los pone `ion-fab`. Aquí solo va lo que no
+ * trae: el fondo borroso y que las opciones salgan en arco en vez de en fila.
+ */
+
+.rapido {
+  --radio: 104px;
+
+  /* Por encima de la barra de pestañas, que mide 56 px. */
+  margin-bottom: 30px;
+}
+
+/* Fuera de ion-content, hermano del encabezado: desde dentro del contenido
+   ningún z-index lo alcanza, y el degradado se quedaba nítido mientras el
+   resto se difuminaba. El 11 es para pasar del 10 que Ionic da a ion-header. */
+.velo-rapido {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  padding: 0;
+  border: 0;
+  background: rgba(9, 30, 22, 0.28);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+
+.velo-rapido--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/*
+ * El arco.
+ *
+ * `rotate(A) translate(R) rotate(-A)` coloca la opción a distancia R en la
+ * dirección A, y el segundo giro la deja derecha. Al pasar de 0 a sus valores
+ * finales el navegador interpola el giro y la distancia a la vez, así que la
+ * opción no sale en línea recta: describe una curva desde el botón.
+ *
+ * `ion-fab-list` apila sus botones en columna; se anula esa colocación para
+ * que todos partan del mismo punto y sea el transform quien los reparta.
+ */
+ion-fab-list.fab-list-side-top {
+  margin: 0;
+  bottom: 0;
+}
+
+ion-fab-list ion-fab-button {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  margin: 0;
+
+  transform: rotate(0deg) translate(0) rotate(0deg);
+  transition:
+    transform 440ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    opacity 200ms ease;
+}
+
+ion-fab-list.fab-list-active ion-fab-button {
+  transform: rotate(calc(var(--angulo) * 1deg)) translate(var(--radio))
+    rotate(calc(var(--angulo) * -1deg));
+}
+
+/* La etiqueta, a la izquierda: a la derecha se saldría de la pantalla. Va en
+   un pseudo-elemento porque `ion-fab-button` solo admite el icono dentro. */
+ion-fab-list ion-fab-button::after {
+  content: attr(data-titulo);
+  position: absolute;
+  right: calc(100% + 0.6rem);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  text-shadow: 0 1px 6px rgba(9, 30, 22, 0.55);
+  opacity: 0;
+  transition: opacity 180ms ease 160ms;
+  pointer-events: none;
+}
+
+ion-fab-list.fab-list-active ion-fab-button::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-fab-list ion-fab-button,
+  ion-fab-list ion-fab-button::after,
+  .velo-rapido {
+    transition-duration: 1ms;
+  }
+}
