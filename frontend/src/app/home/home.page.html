@@ -346,7 +346,7 @@
     (didDismiss)="cerrarNuevaCuenta()"
   >
     <ng-template>
-      <div class="hoja__cuerpo interactivo">
+      <div class="hoja__cuerpo interactivo" appCampoVisible>
         <header class="hoja__cabecera">
           <h2 class="hoja__titulo">Nueva cuenta</h2>
           <ion-button fill="clear" size="small" (click)="cerrarNuevaCuenta()">Cancelar</ion-button>
@@ -425,7 +425,7 @@
     (didDismiss)="cerrarModal()"
   >
     <ng-template>
-      <div class="hoja__cuerpo" [class.interactivo]="formularioListo()">
+      <div class="hoja__cuerpo" [class.interactivo]="formularioListo()" appCampoVisible>
         <header class="hoja__cabecera">
           <h2 class="hoja__titulo">{{ tipoNuevo() === 'ingreso' ? 'Nuevo ingreso' : 'Nuevo gasto' }}</h2>
           <ion-button fill="clear" size="small" (click)="cerrarModal()">Cancelar</ion-button>

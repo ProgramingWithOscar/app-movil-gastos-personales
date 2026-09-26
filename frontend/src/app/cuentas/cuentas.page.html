@@ -150,7 +150,7 @@
     (didDismiss)="cerrar()"
   >
     <ng-template>
-      <div class="hoja__cuerpo">
+      <div class="hoja__cuerpo" appCampoVisible>
         <header class="hoja__cabecera">
           <h2>{{ editando() ? 'Editar cuenta' : 'Nueva cuenta' }}</h2>
           <ion-button fill="clear" size="small" (click)="cerrar()">Cancelar</ion-button>

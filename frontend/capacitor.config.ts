@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 /**
  * Si CAP_SERVER_URL está definida al compilar, la app no usa los archivos
@@ -37,6 +38,21 @@ const config: CapacitorConfig = {
       backgroundColor: '#F3F9F6',
       showSpinner: false,
       androidScaleType: 'CENTER_CROP',
+    },
+
+    /**
+     * `native` hace que Android encoja la WebView al abrirse el teclado, en vez
+     * de dejarlo encima tapando lo que hay debajo. Es el valor por defecto del
+     * plugin, pero escrito: de él depende que las hojas suban, y un día que
+     * alguien lo cambie sin querer el fallo sería difícil de atribuir.
+     *
+     * Subir el campo enfocado dentro de la hoja es cosa aparte, de la
+     * directiva appCampoVisible: estas hojas no usan ion-content, así que el
+     * asistente de teclado de Ionic no las alcanza.
+     */
+    Keyboard: {
+      resize: KeyboardResize.Native,
+      resizeOnFullScreen: true,
     },
   },
   android: {
